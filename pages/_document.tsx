@@ -10,18 +10,6 @@ class MyDocument extends Document {
             name="description"
             content="See pictures in a modern photo gallery."
           />
-          <meta
-            property="og:site_name"
-            content="photo-gallery-olicoding.vercel.app"
-          />
-          <meta
-            property="og:description"
-            content="See pictures in a modern photo gallery."
-          />
-          <meta
-            property="og:title"
-            content="See pictures in a modern photo gallery."
-          />
         </Head>
         <body className="bg-black antialiased">
           <Main />
