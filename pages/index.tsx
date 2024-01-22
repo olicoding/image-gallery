@@ -5,12 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import Star from "../components/icons/Star";
-// import Star from "../components/icons/Star";
 import Modal from "../components/Modal";
-import cloudinary from "../utils/cloudinary";
-import getBase64ImageUrl from "../utils/generateBlurPlaceholder";
-import type { ImageProps } from "../utils/types";
-import { useLastViewedPhoto } from "../utils/useLastViewedPhoto";
+import cloudinary from "../backend/utils/cloudinary";
+import getBase64ImageUrl from "../backend/utils/generateBlurPlaceholder";
+import type { ImageProps } from "../backend/utils/types";
+import { useLastViewedPhoto } from "../backend/utils/useLastViewedPhoto";
 
 const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
   const router = useRouter();
@@ -29,8 +28,14 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
   return (
     <>
       <Head>
-        <title>Image Gallery</title>
+        <title>Image Gallery | Home</title>
       </Head>
+      <header className="flex justify-between bg-black p-4 text-white">
+        <h1 className="text-lg">Welcome</h1>
+        <Link href="/admin" className="hover:underline">
+          Login
+        </Link>
+      </header>
       <main className="mx-auto max-w-[1960px] p-4">
         {photoId && (
           <Modal
