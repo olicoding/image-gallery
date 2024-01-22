@@ -30,12 +30,12 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
       <Head>
         <title>Image Gallery | Home</title>
       </Head>
-      <header className="flex justify-between bg-black p-4 text-white">
+      {/* <header className="flex justify-between bg-black p-4 text-white">
         <h1 className="text-lg">Welcome</h1>
         <Link href="/admin" className="hover:underline">
           Login
         </Link>
-      </header>
+      </header> */}
       <main className="mx-auto max-w-[1960px] p-4">
         {photoId && (
           <Modal
