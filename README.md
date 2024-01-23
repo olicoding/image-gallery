@@ -1,10 +1,25 @@
 # Image Gallery
 
-Welcome to the Image Gallery! A smooth and modern webapp that brings photos to life. It's fast, it's beautiful, and it's built with some of the coolest tech out there.
+Welcome to the Image Gallery! This is a modern web application where photos come to life. Combining Next.js on the frontend and Express.js on the backend, I'm building something that's both easy to use and great to look at.
 
-## Built With Love Using
+## What's Cooking: Dynamic Admin Area
 
-- **Next.js**: Supercharging React with fast page loads and SEO friendliness.
-- **Tailwind CSS**: Making UI snappy and customizable with minimal fuss.
-- **Cloudinary**: The secret sauce for managing and delivering images lightning-fast.
-- **TypeScript**: Keeping our code safe and sound with type checking.
+Right now, you can check out the [live landing page](https://image-gallery-olicoding.vercel.app/) with a neat grid of photos. But that's just the start. I'm working on an admin area where you can:
+
+- **Rearrange With Ease**: Drag-and-drop photos and albums to organize the gallery.
+- **Edit on the Fly**: Update photo details and manage albums in real time.
+- **Stay Secure**: Only authenticated users can make changes via secure login.
+
+## Crafted With
+
+- **Next.js**: For a fast, SEO-friendly frontend.
+- **Express.js & MongoDB**: Powering the backend to handle data smoothly.
+- **Tailwind CSS**: For a stylish, responsive design.
+- **Cloudinary**: Quick and efficient image handling.
+- **TypeScript**: Code safety first!
+
+## Looking Ahead
+
+The plan is to keep making the admin area better with sorting options and interactive features. I want this gallery to be more than just pictures on a screen. It should be an engaging platform for managing and organising photos easily.
+
+Stay tuned for more updates as I keep improving and expanding!
