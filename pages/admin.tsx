@@ -25,8 +25,8 @@ const Admin: NextPage = () => {
 export default Admin;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // Authentication logic
-  // For now, let's just allow access, but you'll need to replace this with actual authentication check
+  // dashboard logic
+  // make sure to handle access for 'visitor' and 'admin'
 
   return {
     props: {},

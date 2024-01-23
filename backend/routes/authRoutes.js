@@ -1,14 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const passport = require("passport");
-const User = require("../models/User");
 
-router.post("/login", passport.authenticate("local"), (req, res) => {
-  res.json({ message: "Logged in successfully" });
+router.post("/login", (req, res) => {
+  const { password } = req.body;
+
+  if (password === process.env.ADMIN_SECRET) {
+    return res.json({ message: "Admin logged in successfully." });
+  } else {
+    return res.status(401).json({ message: "Invalid password." });
+  }
 });
 
 router.get("/logout", (req, res) => {
-  req.logout();
   res.json({ message: "Logged out successfully" });
 });
 

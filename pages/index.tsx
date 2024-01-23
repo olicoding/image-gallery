@@ -3,20 +3,68 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
-import Star from "../components/icons/Star";
+import { useState, useEffect, useRef } from "react";
 import Modal from "../components/Modal";
+import Star from "../components/icons/Star";
 import cloudinary from "../backend/utils/cloudinary";
-import getBase64ImageUrl from "../backend/utils/generateBlurPlaceholder";
+import useOutsideClick from "../hooks/useOutsideClick";
 import type { ImageProps } from "../backend/utils/types";
 import { useLastViewedPhoto } from "../backend/utils/useLastViewedPhoto";
+import getBase64ImageUrl from "../backend/utils/generateBlurPlaceholder";
 
 const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
   const router = useRouter();
+  const serverUrl =
+    process.env.NEXT_PUBLIC_NODE_ENV === "prod"
+      ? process.env.NEXT_PUBLIC_SERVER_URL_PROD
+      : process.env.NEXT_PUBLIC_SERVER_URL_DEV;
   const { photoId } = router.query;
   const [lastViewedPhoto, setLastViewedPhoto] = useLastViewedPhoto();
-
   const lastViewedPhotoRef = useRef<HTMLAnchorElement>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const dropdownRef = useRef(null);
+
+  useOutsideClick(dropdownRef, () => {
+    if (showDropdown) {
+      setShowDropdown(false);
+      setShowAdminLogin(false);
+      setAdminPassword("");
+      setLoginError("");
+    }
+  });
+
+  const handleVisitorLogin = async () => {
+    // set state as 'visitor' with limited access
+    router.push("/admin");
+  };
+
+  const handleAdminLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    // set state as 'admin' with full access
+    e.preventDefault();
+    setLoginError("");
+
+    try {
+      const response = await fetch(`${serverUrl}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: adminPassword }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        router.push("/admin");
+      } else {
+        const errorData = await response.json();
+        setLoginError(errorData.message);
+      }
+    } catch (error) {
+      console.error("Login error:", error.message);
+      setLoginError("An error occurred during login.");
+    }
+  };
 
   useEffect(() => {
     if (lastViewedPhoto && !photoId) {
@@ -30,12 +78,53 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
       <Head>
         <title>Image Gallery | Home</title>
       </Head>
-      {/* <header className="flex justify-between bg-black p-4 text-white">
-        <h1 className="text-lg">Welcome</h1>
-        <Link href="/admin" className="hover:underline">
-          Login
-        </Link>
-      </header> */}
+      <header className="flex justify-end bg-black p-4 text-white">
+        <button
+          onClick={() => setShowDropdown(!showDropdown)}
+          className="hover:underline"
+        >
+          Dashboard
+        </button>
+        {showDropdown && (
+          <div
+            ref={dropdownRef}
+            className="absolute right-4 top-10 z-10 mt-2 w-48 bg-white py-2 shadow-lg"
+          >
+            <button
+              onClick={handleVisitorLogin}
+              className="block w-full px-4 py-2 text-left text-black hover:bg-gray-100"
+            >
+              Visitor
+            </button>
+            <button
+              onClick={() => setShowAdminLogin(!showAdminLogin)}
+              className="block w-full px-4 py-2 text-left text-black hover:bg-gray-100"
+            >
+              Admin
+            </button>
+            {showAdminLogin && (
+              <form onSubmit={handleAdminLogin} className="p-4">
+                <input
+                  type="password"
+                  placeholder="Enter password"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  className="mb-2 w-full border px-2 py-1 text-black"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-black px-4 py-2 text-white"
+                >
+                  Login
+                </button>
+                {loginError && (
+                  <p className="mt-2 text-red-500">{loginError}</p>
+                )}
+              </form>
+            )}
+          </div>
+        )}
+      </header>
       <main className="mx-auto max-w-[1960px] p-4">
         {photoId && (
           <Modal
