@@ -21,6 +21,7 @@
 *.pem
 dev-plan.md
 old-*
+/temp/*
 
 # debug
 npm-debug.log*

@@ -1,13 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useKeypress from "react-use-keypress";
-import { useLastViewedPhoto } from "../utils/useLastViewedPhoto";
+import { useLastViewedPhoto } from "@/utils/useLastViewedPhoto";
 import SharedModal from "./SharedModal";
 
-export default function Carousel({
-  index,
-  currentPhoto,
-}) {
+export default function Carousel({ index, currentPhoto }) {
   const router = useRouter();
   const [, setLastViewedPhoto] = useLastViewedPhoto();
 

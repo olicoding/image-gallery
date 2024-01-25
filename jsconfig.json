@@ -1,16 +1,14 @@
 {
-    "compilerOptions": {
-      "target": "es6",
-      "module": "esnext",
-      "jsx": "preserve",
-      "moduleResolution": "node",
-      "baseUrl": ".",
-      "paths": {
-        "@/components/*": ["components/*"],
-        "@/utils/*": ["utils/*"],
-        "@/hooks/*": ["hooks/*"]
-      }
-    },
-    "exclude": ["node_modules", "next.config.js", ".next/", "out/"]
-  }
-  
+  "compilerOptions": {
+    "target": "es6",
+    "module": "esnext",
+    "jsx": "preserve",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@/utils/*": ["utils/*"],
+      "@/components/*": ["app/components/*"]
+    }
+  },
+  "exclude": ["node_modules", "next.config.js", ".next/", "out/"]
+}
