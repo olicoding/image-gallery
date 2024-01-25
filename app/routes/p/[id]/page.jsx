@@ -1,15 +1,14 @@
 "use client";
 
 import Head from "next/head";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import Carousel from ".@/components/Carousel";
 import getResults from "@/utils/cachedImages";
 import cloudinary from "@/utils/cloudinary";
 import getBase64ImageUrl from "@/utils/generateBlurPlaceholder";
 
 const Home = ({ currentPhoto }) => {
-  const router = useRouter();
-  const { photoId } = router.query;
+  const { photoId } = useSearchParams();
   let index = Number(photoId);
 
   const currentPhotoUrl = `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_2560/${currentPhoto.public_id}.${currentPhoto.format}`;
@@ -46,7 +45,7 @@ export const getStaticProps = async (context) => {
   }
 
   const currentPhoto = reducedResults.find(
-    (img) => img.id === Number(context.params.photoId)
+    (img) => img.id === Number(context.params.id)
   );
   currentPhoto.blurDataUrl = await getBase64ImageUrl(currentPhoto);
 
@@ -66,7 +65,7 @@ export async function getStaticPaths() {
 
   let fullPaths = [];
   for (let i = 0; i < results.resources.length; i++) {
-    fullPaths.push({ params: { photoId: i.toString() } });
+    fullPaths.push({ params: { id: i.toString() } });
   }
 
   return {
