@@ -10,10 +10,9 @@ import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 import { useSwipeable } from "react-swipeable";
-import { variants } from "../backend/utils/animationVariants";
-import downloadPhoto from "../backend/utils/downloadPhoto";
-import { range } from "../backend/utils/range";
-import type { ImageProps, SharedModalProps } from "../backend/utils/types";
+import { variants } from "../utils/animationVariants";
+import downloadPhoto from "../utils/downloadPhoto";
+import { range } from "../utils/range";
 
 export default function SharedModal({
   index,
@@ -23,10 +22,10 @@ export default function SharedModal({
   navigation,
   currentPhoto,
   direction,
-}: SharedModalProps) {
+}) {
   const [loaded, setLoaded] = useState(false);
 
-  let filteredImages = images?.filter((img: ImageProps) =>
+  let filteredImages = images?.filter((img) =>
     range(index - 15, index + 15).includes(img.id)
   );
 

@@ -1,13 +1,11 @@
-import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Carousel from "../../components/Carousel";
-import getResults from "../../backend/utils/cachedImages";
-import cloudinary from "../../backend/utils/cloudinary";
-import getBase64ImageUrl from "../../backend/utils/generateBlurPlaceholder";
-import type { ImageProps } from "../../backend/utils/types";
+import getResults from "../../utils/cachedImages";
+import cloudinary from "../../utils/cloudinary";
+import getBase64ImageUrl from "../../utils/generateBlurPlaceholder";
 
-const Home: NextPage = ({ currentPhoto }: { currentPhoto: ImageProps }) => {
+const Home = ({ currentPhoto }) => {
   const router = useRouter();
   const { photoId } = router.query;
   let index = Number(photoId);
@@ -29,10 +27,10 @@ const Home: NextPage = ({ currentPhoto }: { currentPhoto: ImageProps }) => {
 
 export default Home;
 
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getStaticProps = async (context) => {
   const results = await getResults();
 
-  let reducedResults: ImageProps[] = [];
+  let reducedResults = [];
   let i = 0;
   for (let result of results.resources) {
     reducedResults.push({

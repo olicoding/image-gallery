@@ -1,4 +1,3 @@
-import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,21 +5,16 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
 import Modal from "../components/Modal";
 import Star from "../components/icons/Star";
-import cloudinary from "../backend/utils/cloudinary";
+import cloudinary from "../utils/cloudinary";
 import useOutsideClick from "../hooks/useOutsideClick";
-import type { ImageProps } from "../backend/utils/types";
-import { useLastViewedPhoto } from "../backend/utils/useLastViewedPhoto";
-import getBase64ImageUrl from "../backend/utils/generateBlurPlaceholder";
+import { useLastViewedPhoto } from "../utils/useLastViewedPhoto";
+import getBase64ImageUrl from "../utils/generateBlurPlaceholder";
 
-const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
+const Home = ({ images }) => {
   const router = useRouter();
-  const serverUrl =
-    process.env.NEXT_PUBLIC_NODE_ENV === "prod"
-      ? process.env.NEXT_PUBLIC_SERVER_URL_PROD
-      : process.env.NEXT_PUBLIC_SERVER_URL_DEV;
   const { photoId } = router.query;
   const [lastViewedPhoto, setLastViewedPhoto] = useLastViewedPhoto();
-  const lastViewedPhotoRef = useRef<HTMLAnchorElement>(null);
+  const lastViewedPhotoRef = useRef(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [adminPassword, setAdminPassword] = useState("");
@@ -41,20 +35,19 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
     router.push("/admin");
   };
 
-  const handleAdminLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAdminLogin = async (e) => {
     // set state as 'admin' with full access
     e.preventDefault();
     setLoginError("");
 
     try {
-      const response = await fetch(`${serverUrl}/api/auth/login`, {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: adminPassword }),
       });
 
       if (response.ok) {
-        const data = await response.json();
         router.push("/admin");
       } else {
         const errorData = await response.json();
@@ -152,6 +145,7 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
               key={id}
               href={`/?photoId=${id}`}
               as={`/p/${id}`}
+              scroll={false}
               ref={id === Number(lastViewedPhoto) ? lastViewedPhotoRef : null}
               shallow
               className="after:content group relative mb-5 block w-full cursor-zoom-in after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:shadow-highlight"
@@ -190,7 +184,7 @@ export async function getStaticProps() {
     .sort_by("public_id", "desc")
     .max_results(400)
     .execute();
-  let reducedResults: ImageProps[] = [];
+  let reducedResults = [];
 
   let i = 0;
   for (let result of results.resources) {
@@ -204,7 +198,7 @@ export async function getStaticProps() {
     i++;
   }
 
-  const blurImagePromises = results.resources.map((image: ImageProps) => {
+  const blurImagePromises = results.resources.map((image) => {
     return getBase64ImageUrl(image);
   });
   const imagesWithBlurDataUrls = await Promise.all(blurImagePromises);

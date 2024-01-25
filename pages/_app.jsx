@@ -1,8 +1,7 @@
 import { Analytics } from "@vercel/analytics/react";
-import type { AppProps } from "next/app";
 import "../styles/index.css";
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+export default function MyApp({ Component, pageProps }) {
   return (
     <>
       <Component {...pageProps} />

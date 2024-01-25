@@ -1,9 +1,8 @@
-import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import Dashboard from "../components/admin/Dashboard";
 import Head from "next/head";
 
-const Admin: NextPage = () => {
+const Admin = () => {
   return (
     <div>
       <Head>
@@ -24,9 +23,9 @@ const Admin: NextPage = () => {
 
 export default Admin;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps = async (context) => {
   // dashboard logic
-  // make sure to handle access for 'visitor' and 'admin'
+  // handle access for 'visitor' and 'admin'
 
   return {
     props: {},
