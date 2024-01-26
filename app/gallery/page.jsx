@@ -7,23 +7,19 @@ import Star from "@/components/icons/Star";
 import { useEffect, useRef } from "react";
 import Modal from "@/components/Modal";
 import { useLastViewedPhoto } from "@/utils/useLastViewedPhoto";
-import { useGlobalState } from "@/utils/globalState";
 
 export default function Gallery({ images }) {
   const params = useParams();
   const photoId = params.photoId;
   const [lastViewedPhoto, setLastViewedPhoto] = useLastViewedPhoto();
   const lastViewedPhotoRef = useRef(null);
-  const [, setPhotos] = useGlobalState("photos");
 
   useEffect(() => {
-    setPhotos(images);
-
     if (lastViewedPhoto && !photoId) {
       lastViewedPhotoRef.current.scrollIntoView({ block: "center" });
       setLastViewedPhoto(null);
     }
-  }, [images, setPhotos, photoId, lastViewedPhoto, setLastViewedPhoto]);
+  }, [photoId, lastViewedPhoto, setLastViewedPhoto]);
 
   return (
     <main className="mx-auto max-w-[1960px] p-4">
@@ -53,6 +49,7 @@ export default function Gallery({ images }) {
             <Link
               key={photoId}
               href={`/gallery/photo/${photoId}`}
+              // href={`/gallery/photo?photoId=${photoId}`}
               // as={`/gallery/photo/${photoId}`}
               scroll={false}
               ref={

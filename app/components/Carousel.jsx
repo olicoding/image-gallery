@@ -7,11 +7,14 @@ import { useLastViewedPhoto } from "@/utils/useLastViewedPhoto";
 import SharedModal from "./SharedModal";
 
 export default function Carousel({ index, currentPhoto }) {
+  console.log("In Carousel, index: ", index);
+  console.log("In Carousel, currentPhoto: ", currentPhoto);
+
   const router = useRouter();
   const [, setLastViewedPhoto] = useLastViewedPhoto();
 
   function closeModal() {
-    setLastViewedPhoto(currentPhoto.id);
+    setLastViewedPhoto(currentPhoto.photoId);
     router.push("/", undefined, { shallow: true });
   }
 

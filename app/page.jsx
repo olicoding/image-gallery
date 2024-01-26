@@ -14,7 +14,7 @@ async function fetchImages() {
   let i = 0;
   for (let result of results.resources) {
     reducedResults.push({
-      id: i,
+      photoId: i,
       height: result.height,
       width: result.width,
       public_id: result.public_id,
@@ -37,5 +37,6 @@ async function fetchImages() {
 
 export default async function Home() {
   const { images } = await fetchImages();
+
   return <Gallery images={images} />;
 }

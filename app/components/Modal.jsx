@@ -2,14 +2,15 @@
 
 import { Dialog } from "@headlessui/react";
 import { motion } from "framer-motion";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useRef, useState } from "react";
 import useKeypress from "react-use-keypress";
 import SharedModal from "./SharedModal";
 
 export default function Modal({ images, onClose }) {
   let overlayRef = useRef();
-  const { photoId } = useSearchParams();
+  const params = useParams();
+  const photoId = params.photoId;
   let index = Number(photoId);
 
   const [direction, setDirection] = useState(0);
@@ -29,7 +30,7 @@ export default function Modal({ images, onClose }) {
     setCurIndex(newVal);
     router.push(
       {
-        query: { id: newVal },
+        query: { photoId: newVal },
       },
       `/p/${newVal}`,
       { shallow: true }
