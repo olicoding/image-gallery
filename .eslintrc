@@ -1,0 +1,25 @@
+{
+  "extends": ["next", "next/core-web-vitals"],
+  "rules": {
+    "import/no-unresolved": [
+      "error",
+      { "ignore": ["@vercel/analytics/react"] }
+    ],
+    "react/function-component-definition": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/rules-of-hooks": "error",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-uses-react": "off",
+    "react/jsx-uses-vars": "warn",
+    "react/prop-types": "off",
+    "no-console": "warn",
+    "no-unused-vars": "warn",
+    "prefer-arrow-callback": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}

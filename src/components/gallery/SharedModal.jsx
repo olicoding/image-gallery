@@ -12,9 +12,9 @@ import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 import { useSwipeable } from "react-swipeable";
-import { variants } from "@/utils/animationVariants";
-import downloadPhoto from "@/utils/downloadPhoto";
-import { range } from "@/utils/range";
+import { variants } from "src/utils/animationVariants";
+import downloadPhoto from "src/utils/downloadPhoto";
+import { range } from "src/utils/range";
 
 export default function SharedModal({
   index,

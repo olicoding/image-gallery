@@ -1,19 +1,19 @@
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Header from "src/components/header/Header";
+import Footer from "src/components/footer/Footer";
 
 // export const revalidate = 3600;
 
 export const metadata = {
   title: "Image Gallery",
-  description: "Modern image gallery",
+  description: "Modern Image Gallery",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-black antialiased">
+      <body className="flex h-svh flex-col content-center justify-between bg-black antialiased">
         <Header />
         <main className="mx-auto max-w-6xl">
           {children}

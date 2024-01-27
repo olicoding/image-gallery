@@ -1,8 +1,8 @@
 "use client";
-import Carousel from "@/components/Carousel";
+import Carousel from "@/components/gallery/Carousel";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useGlobalState } from "@/utils/globalState";
+import { useGlobalState } from "src/utils/globalState";
 
 export default function PhotoPage() {
   const params = useParams();

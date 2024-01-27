@@ -1,6 +1,6 @@
-import { getBase64ImageUrl } from "@/utils/generateBlurPlaceholder";
-import cloudinary from "@/utils/cloudinary";
-import Gallery from "@/components/Gallery";
+import { getBase64ImageUrl } from "src/utils/generateBlurPlaceholder";
+import cloudinary from "src/utils/cloudinary";
+import Gallery from "@/components/gallery/Gallery";
 
 async function fetchImages() {
   const results = await cloudinary.v2.search
