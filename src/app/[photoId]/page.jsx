@@ -1,35 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { Context } from "@/context/ContextProvider";
 import CarouselStructure from "@/components/photos/CarouselStructure";
-import getResults from "@/utils/cachedImages";
 
 const PhotoPage = () => {
-  const params = useParams();
-  const photoId = params.photoId;
-  const index = Number(photoId);
+  const { photoId } = useParams();
+  const { photos } = useContext(Context);
   const [currentPhoto, setCurrentPhoto] = useState(null);
 
   useEffect(() => {
-    const loadImages = async () => {
-      const results = await getResults();
-      const images = results.resources;
-      const photo = images.find((p) => p.photoId === index);
-      setCurrentPhoto(photo);
-    };
-
-    loadImages();
-  }, [photoId]);
+    const photo = photos.find((p) => p.photoId === Number(photoId));
+    setCurrentPhoto(photo);
+  }, [photoId, photos]);
 
   if (!currentPhoto) {
-    return <div>Loading photo...</div>;
+    return <div className="text-white">Loading photo...</div>;
   }
 
   return (
-    <main className="mx-auto max-w-[1960px] p-4">
-      <CarouselStructure index={index} currentPhoto={currentPhoto} />
-    </main>
+    <CarouselStructure index={Number(photoId)} currentPhoto={currentPhoto} />
   );
 };
 

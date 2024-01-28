@@ -9,8 +9,7 @@ import SharedModal from "./CarouselElements";
 
 export default function PhotoViewer({ images, onClose }) {
   let overlayRef = useRef();
-  const params = useParams();
-  const photoId = params.photoId;
+  const { photoId } = useParams();
 
   console.log("In Modal PhotoViewer, photoId: ", photoId);
 
