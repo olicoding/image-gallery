@@ -15,16 +15,27 @@ import { useSwipeable } from "react-swipeable";
 import { variants } from "src/utils/animationVariants";
 import downloadPhoto from "src/utils/downloadPhoto";
 import { range } from "src/utils/range";
+import { useContext } from "react";
+import { Context } from "src/context/ContextProvider";
 
-export default function SharedModal({
+export default function CarouselElements({
   index,
-  images,
   changePhotoId,
   closeModal,
   navigation,
   currentPhoto,
   direction,
 }) {
+  // console.log("CarouselElements component, images: ", images);
+  // console.log("CarouselElements component, index: ", index);
+  // console.log("CarouselElements component, changePhotoId: ", changePhotoId);
+  // console.log("CarouselElements component, closeModal: ", closeModal);
+  // console.log("CarouselElements component, navigation: ", navigation);
+  // console.log("CarouselElements component, currentPhoto: ", currentPhoto);
+  // console.log("CarouselElements component, direction: ", direction);
+
+  const { images } = useContext(Context);
+
   const [loaded, setLoaded] = useState(false);
 
   let filteredImages = images?.filter((img) =>
@@ -47,6 +58,8 @@ export default function SharedModal({
 
   let currentImage = images ? images[index] : currentPhoto;
 
+  if (!currentImage) return <div className="text-white">Loading...</div>;
+
   return (
     <MotionConfig
       transition={{
@@ -66,9 +79,9 @@ export default function SharedModal({
                 key={index}
                 custom={direction}
                 variants={variants}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
+                initial="enter"
+                animate="center"
+                exit="exit"
                 className="absolute"
               >
                 <Image
@@ -80,7 +93,7 @@ export default function SharedModal({
                   width={navigation ? 1280 : 1920}
                   height={navigation ? 853 : 1280}
                   priority
-                  alt="Next.js Conf image"
+                  alt="Dynamic photo title"
                   onLoad={() => setLoaded(true)}
                 />
               </motion.div>

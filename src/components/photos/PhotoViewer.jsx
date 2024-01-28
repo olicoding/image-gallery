@@ -5,12 +5,15 @@ import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
 import { useRef, useState } from "react";
 import useKeypress from "react-use-keypress";
-import SharedModal from "./SharedModal";
+import SharedModal from "./CarouselElements";
 
-export default function Modal({ images, onClose }) {
+export default function PhotoViewer({ images, onClose }) {
   let overlayRef = useRef();
   const params = useParams();
   const photoId = params.photoId;
+
+  console.log("In Modal PhotoViewer, photoId: ", photoId);
+
   let index = Number(photoId);
 
   const [direction, setDirection] = useState(0);

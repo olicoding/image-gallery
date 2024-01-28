@@ -1,31 +1,34 @@
 "use client";
 
+import { useEffect, useRef, useContext } from "react";
+import { Context } from "src/context/ContextProvider";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import Star from "src/components/icons/Star";
-import { useEffect, useRef } from "react";
-import Modal from "@/components/gallery/Modal";
-import { useLastViewedPhoto } from "src/utils/useLastViewedPhoto";
+import PhotoViewer from "@/components/photos/PhotoViewer";
 
-export default function Gallery({ images }) {
+export default function GalleryGrid({ images }) {
   const params = useParams();
   const photoId = params.photoId;
-  const [lastViewedPhoto, setLastViewedPhoto] = useLastViewedPhoto();
   const lastViewedPhotoRef = useRef(null);
+  const { photos, setPhotos, lastViewedPhoto, setLastViewedPhoto } =
+    useContext(Context);
 
   useEffect(() => {
+    setPhotos(photos);
+
     if (lastViewedPhoto && !photoId) {
       lastViewedPhotoRef.current.scrollIntoView({ block: "center" });
       setLastViewedPhoto(null);
     }
-  }, [photoId, lastViewedPhoto, setLastViewedPhoto]);
+  }, [photos, setPhotos, photoId, lastViewedPhoto, setLastViewedPhoto]);
 
   return (
     <main className="mx-auto max-w-[1960px] p-4">
       {photoId && (
-        <Modal
-          images={images}
+        <PhotoViewer
+          images={photos}
           onClose={() => {
             setLastViewedPhoto(photoId);
           }}
@@ -46,34 +49,33 @@ export default function Gallery({ images }) {
         </div>
         {images &&
           images.map(({ photoId, public_id, format, blurDataUrl }) => (
-            <Link
-              key={photoId}
-              href={`/gallery/photo/${photoId}`}
-              // href={`/gallery/photo?photoId=${photoId}`}
-              // as={`/gallery/photo/${photoId}`}
-              scroll={false}
-              ref={
-                photoId === Number(lastViewedPhoto) ? lastViewedPhotoRef : null
-              }
-              shallow
-              className="after:content group relative mb-5 block w-full cursor-zoom-in after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:shadow-highlight"
-            >
-              <Image
-                alt="Next.js Conf photo"
-                className="transform rounded-lg brightness-90 transition will-change-auto group-hover:brightness-110"
-                style={{ transform: "translate3d(0, 0, 0)" }}
-                placeholder="blur"
-                blurDataURL={blurDataUrl}
-                unoptimized={true}
-                src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${public_id}.${format}`}
-                width={720}
-                height={480}
-                sizes="(max-width: 640px) 100vw,
+            // <Link
+            //   key={photoId}
+            //   href={`/${photoId}`}
+            //   // as={`/gallery/photo/${photoId}`}
+            //   scroll={false}
+            //   ref={
+            //     photoId === Number(lastViewedPhoto) ? lastViewedPhotoRef : null
+            //   }
+            //   shallow
+            //   className="after:content group relative mb-5 block w-full cursor-zoom-in after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:shadow-highlight"
+            // >
+            <Image
+              alt="Dynamic photo title"
+              className="transform rounded-lg brightness-90 transition will-change-auto group-hover:brightness-110"
+              style={{ transform: "translate3d(0, 0, 0)" }}
+              placeholder="blur"
+              blurDataURL={blurDataUrl}
+              unoptimized={true}
+              src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${public_id}.${format}`}
+              width={720}
+              height={480}
+              sizes="(max-width: 640px) 100vw,
                   (max-width: 1280px) 50vw,
                   (max-width: 1536px) 33vw,
                   25vw"
-              />
-            </Link>
+            />
+            // </Link>
           ))}
       </div>
     </main>

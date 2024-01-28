@@ -3,15 +3,17 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useKeypress from "react-use-keypress";
-import { useLastViewedPhoto } from "src/utils/useLastViewedPhoto";
-import SharedModal from "./SharedModal";
+import CarouselElements from "./CarouselElements";
+import { useContext } from "react";
+import { Context } from "src/context/ContextProvider";
 
-export default function Carousel({ index, currentPhoto }) {
-  console.log("In Carousel, index: ", index);
-  console.log("In Carousel, currentPhoto: ", currentPhoto);
+export default function CarouselStructure({ index, currentPhoto }) {
+  console.log("In CarouselStructure, index: ", index);
+  console.log("In CarouselStructure, currentPhoto: ", currentPhoto);
+
+  const { setLastViewedPhoto } = useContext(Context);
 
   const router = useRouter();
-  const [, setLastViewedPhoto] = useLastViewedPhoto();
 
   function closeModal() {
     setLastViewedPhoto(currentPhoto.photoId);
@@ -40,7 +42,7 @@ export default function Carousel({ index, currentPhoto }) {
           priority={true}
         />
       </button>
-      <SharedModal
+      <CarouselElements
         index={index}
         changePhotoId={changePhotoId}
         currentPhoto={currentPhoto}

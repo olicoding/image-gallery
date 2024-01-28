@@ -1,28 +1,37 @@
-import { ImagesSchemaWithPhotos } from "@/models/Images";
-import env from "./env";
+// import env from "./env";
+// import { ImagesSchemaWithPhotos } from "@/models/Images";
+import { getBase64ImageUrl } from "@/utils/generateBlurPlaceholder";
+import cloudinary from "@/utils/cloudinary";
 
-export default async function fetchImages(url) {
-  try {
-    const res = await fetch(url, {
-      headers: {
-        Authorization: env.API_KEY,
-      },
+export async function fetchImages() {
+  const results = await cloudinary.v2.search
+    .expression(`folder:${process.env.CLOUDINARY_FOLDER}/*`)
+    .sort_by("public_id", "desc")
+    .max_results(400)
+    .execute();
+
+  let reducedResults = [];
+
+  let i = 0;
+  for (let result of results.resources) {
+    reducedResults.push({
+      photoId: i,
+      height: result.height,
+      width: result.width,
+      public_id: result.public_id,
+      format: result.format,
     });
-
-    if (!res.ok) throw new Error("Fetch Images error!\n");
-
-    const imagesResults = await res.json();
-
-    //console.log(imagesResults)
-
-    // Parse data with Zod schema
-    const parsedData = ImagesSchemaWithPhotos.parse(imagesResults);
-
-    if (parsedData.total_results === 0) return undefined;
-
-    return parsedData;
-  } catch (e) {
-    // Will show in terminal console
-    if (e instanceof Error) console.log(e.stack);
+    i++;
   }
+
+  const blurImagePromises = results.resources.map((image) => {
+    return getBase64ImageUrl(image);
+  });
+  const imagesWithBlurDataUrls = await Promise.all(blurImagePromises);
+
+  for (let i = 0; i < reducedResults.length; i++) {
+    reducedResults[i].blurDataUrl = imagesWithBlurDataUrls[i];
+  }
+
+  return { images: reducedResults };
 }

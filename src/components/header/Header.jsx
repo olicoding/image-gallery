@@ -2,12 +2,13 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useGlobalState } from "src/utils/globalState";
 import useOutsideClick from "src/utils/useOutsideClick";
+import { useContext } from "react";
+import { Context } from "src/context/ContextProvider";
 
 export default function Header() {
   const router = useRouter();
-  const [user, setUser] = useGlobalState("user");
+  const { user, setUser } = useContext(Context);
   const dropdownRef = useRef(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
