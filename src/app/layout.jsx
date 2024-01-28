@@ -1,9 +1,9 @@
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
-import FetchedImages from "src/app/FetchedImages";
+import FetchedImages from "src/app/server-components/FetchedImages";
 import ContextProvider from "src/context/ContextProvider";
-import Header from "src/components/header/Header";
-import Footer from "src/components/footer/Footer";
+import Header from "@/components/Header";
+import Footer from "src/app/server-components/Footer";
 
 export const metadata = {
   title: "Image Gallery",

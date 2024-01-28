@@ -1,11 +1,11 @@
-import { cleanEnv, str } from "envalid";
+// import { cleanEnv, str } from "envalid";
 
-const env = cleanEnv(process.env, {
-  API_KEY: str(),
-  NODE_ENV: str({ choices: ["development", "test", "production", "staging"] }),
-});
+// const env = cleanEnv(process.env, {
+//   API_KEY: str(),
+//   NODE_ENV: str({ choices: ["development", "test", "production", "staging"] }),
+// });
 
-export default env;
+// export default env;
 
 /**
 Validator types

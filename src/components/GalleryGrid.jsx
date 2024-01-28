@@ -5,23 +5,21 @@ import { Context } from "src/context/ContextProvider";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import Star from "src/components/icons/Star";
-import PhotoViewer from "@/components/photos/PhotoViewer";
+import Star from "src/app/server-components/Star";
+import PhotoViewer from "@/components/PhotoViewer";
 
 export default function GalleryGrid() {
   const { photoId } = useParams();
   const lastViewedPhotoRef = useRef(null);
-  const { photos, setPhotos, lastViewedPhoto, setLastViewedPhoto } =
-    useContext(Context);
+  const { state, dispatch } = useContext(Context);
+  const { photos, lastViewedPhoto } = state;
 
   useEffect(() => {
-    setPhotos(photos);
-
-    if (lastViewedPhoto && !photoId) {
+    if (lastViewedPhoto && !photoId && lastViewedPhotoRef.current) {
       lastViewedPhotoRef.current.scrollIntoView({ block: "center" });
-      setLastViewedPhoto(null);
+      dispatch({ type: "SET_LAST_VIEWED_PHOTO", payload: null });
     }
-  }, [photos, setPhotos, photoId, lastViewedPhoto, setLastViewedPhoto]);
+  }, [lastViewedPhoto, photoId, dispatch]);
 
   return (
     <main className="mx-auto max-w-[1960px] p-4">
@@ -29,7 +27,7 @@ export default function GalleryGrid() {
         <PhotoViewer
           images={photos}
           onClose={() => {
-            setLastViewedPhoto(photoId);
+            dispatch({ type: "SET_LAST_VIEWED_PHOTO", payload: photoId });
           }}
         />
       )}
@@ -51,7 +49,6 @@ export default function GalleryGrid() {
             <Link
               key={photoId}
               href={`/${photoId}`}
-              // as={`/gallery/photo/${photoId}`}
               scroll={false}
               ref={
                 photoId === Number(lastViewedPhoto) ? lastViewedPhotoRef : null
@@ -65,7 +62,6 @@ export default function GalleryGrid() {
                 style={{ transform: "translate3d(0, 0, 0)" }}
                 placeholder="blur"
                 blurDataURL={blurDataUrl}
-                unoptimized={true}
                 src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${public_id}.${format}`}
                 width={720}
                 height={480}

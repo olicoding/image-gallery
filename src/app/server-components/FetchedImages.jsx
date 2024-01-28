@@ -1,8 +1,6 @@
 import { getProcessedImages } from "@/utils/imageService";
 
-const FetchedImages = async ({ children }) => {
+export default async function FetchedImages({ children }) {
   const images = await getProcessedImages();
   return children(images);
-};
-
-export default FetchedImages;
+}

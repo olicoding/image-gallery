@@ -11,8 +11,6 @@ export default function PhotoViewer({ images, onClose }) {
   let overlayRef = useRef();
   const { photoId } = useParams();
 
-  console.log("In Modal PhotoViewer, photoId: ", photoId);
-
   let index = Number(photoId);
 
   const [direction, setDirection] = useState(0);

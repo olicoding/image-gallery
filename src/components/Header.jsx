@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef, useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import useOutsideClick from "src/utils/useOutsideClick";
-import { useContext } from "react";
 import { Context } from "src/context/ContextProvider";
 
 export default function Header() {
   const router = useRouter();
-  const { user, setUser } = useContext(Context);
+  const { state, dispatch } = useContext(Context);
+  const user = state.user;
   const dropdownRef = useRef(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
@@ -30,7 +30,7 @@ export default function Header() {
 
   const handleVisitorLogin = async () => {
     resetDropdown();
-    setUser({ role: "visitor" });
+    dispatch({ type: "SET_USER", payload: { role: "visitor" } });
     router.push("/admin");
   };
 
@@ -46,7 +46,7 @@ export default function Header() {
 
       if (response.ok) {
         resetDropdown();
-        setUser({ role: "admin" });
+        dispatch({ type: "SET_USER", payload: { role: "admin" } });
         router.push("/admin");
       } else {
         const errorData = await response.json();
@@ -59,7 +59,7 @@ export default function Header() {
   };
 
   const handleLogout = () => {
-    setUser(null);
+    dispatch({ type: "SET_USER", payload: null });
     router.push("/");
   };
 

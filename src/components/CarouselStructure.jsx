@@ -6,27 +6,23 @@ import useKeypress from "react-use-keypress";
 import CarouselElements from "./CarouselElements";
 import { useContext } from "react";
 import { Context } from "src/context/ContextProvider";
+import Loading from "src/app/server-components/Loading";
 
-export default function CarouselStructure({ index, currentPhoto }) {
-  console.log("In CarouselStructure, index: ", index);
-  console.log("In CarouselStructure, currentPhoto: ", currentPhoto);
-
-  const { setLastViewedPhoto } = useContext(Context);
-
+export default function CarouselStructure() {
+  const { state, dispatch } = useContext(Context);
+  const { currentPhoto } = state;
   const router = useRouter();
 
   function closeModal() {
-    setLastViewedPhoto(currentPhoto.photoId);
     router.push("/", undefined, { shallow: true });
+    dispatch({ type: "SET_CURRENT_PHOTO", payload: null });
   }
 
-  function changePhotoId(newVal) {
-    return newVal;
-  }
+  useKeypress("Escape", closeModal);
 
-  useKeypress("Escape", () => {
-    closeModal();
-  });
+  if (!currentPhoto) return <Loading />;
+
+  const index = currentPhoto.photoId;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center">
@@ -35,19 +31,18 @@ export default function CarouselStructure({ index, currentPhoto }) {
         onClick={closeModal}
       >
         <Image
-          src={currentPhoto.blurDataUrl}
+          src={currentPhoto?.blurDataUrl}
           className="pointer-events-none h-full w-full"
           alt="blurred background"
           fill
-          priority={true}
+          priority
         />
       </button>
       <CarouselElements
         index={index}
-        changePhotoId={changePhotoId}
         currentPhoto={currentPhoto}
         closeModal={closeModal}
-        navigation={false}
+        navigation={true}
       />
     </div>
   );
