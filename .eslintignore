@@ -4,3 +4,5 @@
 .vscode
 package-lock.json
 /node_modules
+/temp
+/src
