@@ -1,17 +1,31 @@
 # Image Gallery
 
-Welcome to the Image Gallery, a web app focused on dynamic image handling.
+Welcome to the Image Gallery, a dynamic web app focused on image handling and presentation. This project showcases my journey in embracing new technologies and continuous learning.
 
-## Admin Area
+## Highlights
 
-Right now, you can check out the [live page](https://image-gallery-olicoding.vercel.app/) with a simple grid of photos, select to view them in a carousel mode and download if you'd like. But that's just the start, I'm working on an admin area where it will be possible to drag-and-drop and reorganize the gallery, and manage different albums easily.
+- **Migration to App Router**: Transitioning from the Next.js Pages Router to the App Router was a significant shift, involving a deep dive into new documentation, concepts, and a complete restructuring of the application. This challenging journey not only boosted my skills but also the app's performance from a modest 60% to an impressive 100% in Lighthouse performance score.
 
-## Built With
+![Lighthouse Scores](assets/lighthouse-scores.gif)
 
-- **Next.js 14**: For a fast, SEO-friendly, optimized frontend. Currently using the pages directory, gradually implementing the app directory for full advantages and recent performance advancements.
-- **Tailwind CSS**: For a stylish, responsive design.
-- **Cloudinary**: Quick and efficient image handling.
+## Experience the Gallery
 
-## Looking Ahead
+Explore the [live page](https://image-gallery-olicoding.vercel.app/) for a rich photo display and interactive features. Click on any image to view the carousel mode.
 
-The plan is to keep making improvements to the admin area with sorting options and interactive features, while learning and practicing with the new app directory in Next.js. The end goal besides learning, it to make this gallery more than just pictures on a screen but an engaging platform for managing and organising photos easily.
+![Gallery View](assets/gallery.jpg)
+
+## Technologies
+
+- **Next.js 14**: Ensuring a fast, SEO-friendly frontend.
+- **Tailwind CSS & Cloudinary**: Combining style with efficient image handling.
+
+## Roadmap
+
+- **Login API**: The current implementation is symbolic. A more secure and modern approach is planned, emphasizing best practices in authentication and security.
+- **Validation with Zod**: To ensure data integrity.
+- **PWA and Caching**: Enhancing offline capabilities and performance.
+- **Admin Area Development**: Focusing on intuitive management, the upcoming admin area will introduce drag-and-drop functionality and multiple albums organization features.
+
+---
+
+Stay tuned for more updates as the project evolves!
