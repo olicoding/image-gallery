@@ -15,7 +15,7 @@ export const getProcessedImages = async () => {
     .execute();
 
   const reducedResults = results.resources.map((result, index) => ({
-    photoId: index,
+    photoId: index + 1,
     height: result.height,
     width: result.width,
     public_id: result.public_id,
