@@ -10,7 +10,7 @@ import Loading from "src/app/server-components/Loading";
 
 export default function CarouselStructure() {
   const { state, dispatch } = useContext(Context);
-  const { currentPhoto } = state;
+  const { photos, currentPhoto } = state;
   const router = useRouter();
 
   function closeModal() {
@@ -22,7 +22,9 @@ export default function CarouselStructure() {
 
   if (!currentPhoto) return <Loading />;
 
-  const index = currentPhoto.photoId;
+  const index = photos.findIndex(
+    (photo) => photo.photoId === currentPhoto.photoId
+  );
 
   return (
     <div className="fixed inset-0 flex items-center justify-center">

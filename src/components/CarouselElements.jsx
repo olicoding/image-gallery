@@ -8,53 +8,38 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
-import { useContext, useState, useEffect, useMemo } from "react";
+import { useContext, useState } from "react";
 import { Context } from "src/context/ContextProvider";
 import { useSwipeable } from "react-swipeable";
 import { variants } from "src/utils/animationVariants";
-import { range } from "src/utils/range";
 import downloadPhoto from "src/utils/downloadPhoto";
 import Loading from "src/app/server-components/Loading";
 
-export default function CarouselElements({ index, closeModal, navigation }) {
-  const [direction, setDirection] = useState(0);
-  const [loaded, setLoaded] = useState(false);
+export default function CarouselElements({ closeModal, navigation }) {
   const { state, dispatch } = useContext(Context);
-  const { photos } = state;
+  const { photos, currentPhoto } = state;
+  const [loaded, setLoaded] = useState(false);
+  const [direction, setDirection] = useState(0);
 
-  function changePhotoId(newIndex) {
-    setDirection(newIndex > index ? 1 : -1);
-    const newPhoto = photos[newIndex];
-    dispatch({ type: "SET_CURRENT_PHOTO", payload: newPhoto });
-  }
+  const currentIndex = photos.findIndex(
+    (photo) => photo.photoId === currentPhoto.photoId
+  );
 
-  const filteredImages = useMemo(() => {
-    return photos?.filter((img) =>
-      range(index - 15, index + 15).includes(img.photoId)
-    );
-  }, [photos, index]);
+  const changePhotoId = (newIndex) => {
+    if (newIndex >= 0 && newIndex < photos.length) {
+      dispatch({ type: "SET_CURRENT_PHOTO", payload: photos[newIndex] });
+
+      setDirection(newIndex > currentIndex ? 1 : -1);
+    }
+  };
 
   const handlers = useSwipeable({
-    onSwipedLeft: () => {
-      if (index < photos?.length - 1) {
-        changePhotoId(index + 1);
-      }
-    },
-    onSwipedRight: () => {
-      if (index > 0) {
-        changePhotoId(index - 1);
-      }
-    },
+    onSwipedLeft: () => changePhotoId(currentIndex + 1),
+    onSwipedRight: () => changePhotoId(currentIndex - 1),
     trackMouse: true,
   });
 
-  let currentImage = photos[index];
-
-  useEffect(() => {
-    // Preloading logic here (if needed)
-  }, [index, photos]);
-
-  if (!currentImage) return <Loading />;
+  if (!currentPhoto) return <Loading />;
 
   return (
     <MotionConfig
@@ -68,11 +53,12 @@ export default function CarouselElements({ index, closeModal, navigation }) {
         {...handlers}
       >
         {/* Main image */}
+
         <div className="w-full overflow-hidden">
           <div className="relative flex aspect-[3/2] items-center justify-center">
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
-                key={index}
+                key={currentIndex}
                 custom={direction}
                 variants={variants}
                 initial="enter"
@@ -84,8 +70,8 @@ export default function CarouselElements({ index, closeModal, navigation }) {
                   src={`https://res.cloudinary.com/${
                     process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
                   }/image/upload/c_scale,${navigation ? "w_1280" : "w_1920"}/${
-                    currentImage.public_id
-                  }.${currentImage.format}`}
+                    currentPhoto.public_id
+                  }.${currentPhoto.format}`}
                   width={navigation ? 1280 : 1920}
                   height={navigation ? 853 : 1280}
                   priority
@@ -102,20 +88,20 @@ export default function CarouselElements({ index, closeModal, navigation }) {
             <div className="relative aspect-[3/2] max-h-full w-full">
               {navigation && (
                 <>
-                  {index > 0 && (
+                  {currentIndex > 0 && (
                     <button
                       className="absolute left-3 top-[calc(50%-16px)] rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
                       style={{ transform: "translate3d(0, 0, 0)" }}
-                      onClick={() => changePhotoId(index - 1)}
+                      onClick={() => changePhotoId(currentIndex - 1)}
                     >
                       <ChevronLeftIcon className="h-6 w-6" />
                     </button>
                   )}
-                  {index + 1 < photos?.length && (
+                  {currentIndex + 1 < photos?.length && (
                     <button
                       className="absolute right-3 top-[calc(50%-16px)] rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
                       style={{ transform: "translate3d(0, 0, 0)" }}
-                      onClick={() => changePhotoId(index + 1)}
+                      onClick={() => changePhotoId(currentIndex + 1)}
                     >
                       <ChevronRightIcon className="h-6 w-6" />
                     </button>
@@ -126,8 +112,8 @@ export default function CarouselElements({ index, closeModal, navigation }) {
                 <button
                   onClick={() =>
                     downloadPhoto(
-                      `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentImage.public_id}.${currentImage.format}`,
-                      `${index}.jpg`
+                      `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentPhoto.public_id}.${currentPhoto.format}`,
+                      `${currentIndex}.jpg`
                     )
                   }
                   className="rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
@@ -146,50 +132,47 @@ export default function CarouselElements({ index, closeModal, navigation }) {
               </div>
             </div>
           )}
+
           {/* Photos Thumbnail View */}
+
           {navigation && (
             <div className="fixed inset-x-0 bottom-0 z-40 overflow-hidden bg-gradient-to-b from-black/0 to-black/60">
               <motion.div
+                className="mx-auto mb-6 mt-6 flex aspect-[5/4] h-32 items-center"
                 initial={false}
-                className="mx-auto mb-6 mt-6 flex aspect-[3/2] h-14"
               >
                 <AnimatePresence initial={false}>
-                  {filteredImages &&
-                    filteredImages.map(({ public_id, format, photoId }) => (
-                      <motion.button
-                        initial={{
-                          width: "0%",
-                          x: `${Math.max((index - 1) * -100, 15 * -100)}%`,
-                        }}
-                        animate={{
-                          scale: photoId === index ? 1.25 : 1,
-                          width: "100%",
-                          x: `${Math.max(index * -100, 15 * -100)}%`,
-                        }}
-                        exit={{ width: "0%" }}
-                        onClick={() => changePhotoId(photoId)}
-                        key={photoId}
+                  {photos.map((photo, index) => (
+                    <motion.button
+                      key={photo.photoId}
+                      initial={{ width: "0%" }}
+                      animate={{
+                        scale: currentIndex === index ? 1.25 : 1,
+                        width: "100%",
+                        height: "100px",
+                        x: `${currentIndex * -100}%`,
+                      }}
+                      exit={{ width: "0%" }}
+                      onClick={() => changePhotoId(index)}
+                      className={`${
+                        currentIndex === index
+                          ? "z-20 rounded-md shadow shadow-black/50"
+                          : "z-10"
+                      } relative inline-block  w-full shrink-0  overflow-hidden focus:outline-none`}
+                    >
+                      <Image
+                        src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_180/${photo.public_id}.${photo.format}`}
+                        alt="Thumbnail"
+                        width={180}
+                        height={120}
                         className={`${
-                          photoId === index
-                            ? "z-20 rounded-md shadow shadow-black/50"
-                            : "z-10"
-                        } ${photoId === 0 ? "rounded-l-md" : ""} ${
-                          photoId === photos.length - 1 ? "rounded-r-md" : ""
-                        } relative inline-block w-full shrink-0 transform-gpu overflow-hidden focus:outline-none`}
-                      >
-                        <Image
-                          alt="small photos on the bottom"
-                          width={180}
-                          height={120}
-                          className={`${
-                            photoId === index
-                              ? "brightness-110 hover:brightness-110"
-                              : "brightness-50 contrast-125 hover:brightness-75"
-                          } h-full transform object-cover transition`}
-                          src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_180/${public_id}.${format}`}
-                        />
-                      </motion.button>
-                    ))}
+                          currentIndex === index
+                            ? "brightness-115 hover:brightness-110"
+                            : "brightness-50 contrast-125"
+                        } mx-1 transition hover:brightness-75`}
+                      />
+                    </motion.button>
+                  ))}
                 </AnimatePresence>
               </motion.div>
             </div>
