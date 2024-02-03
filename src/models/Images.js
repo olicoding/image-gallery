@@ -1,25 +1,27 @@
-import { z } from "zod";
+// to be implemented...
 
-const BasicImageSchema = z.object({
-  page: z.number(),
-  per_page: z.number(),
-  prev_page: z.string().optional(),
-  next_page: z.string().optional(),
-  total_results: z.number(),
-});
+// import { z } from "zod";
 
-const PhotoSchema = z.object({
-  id: z.number(),
-  width: z.number(),
-  height: z.number(),
-  url: z.string(),
-  src: z.object({
-    large: z.string(),
-  }),
-  alt: z.string(),
-  blurredDataUrl: z.string().optional(),
-});
+// const BasicImageSchema = z.object({
+//   page: z.number(),
+//   per_page: z.number(),
+//   prev_page: z.string().optional(),
+//   next_page: z.string().optional(),
+//   total_results: z.number(),
+// });
 
-export const ImagesSchemaWithPhotos = BasicImageSchema.extend({
-  photos: z.array(PhotoSchema),
-});
+// const PhotoSchema = z.object({
+//   id: z.number(),
+//   width: z.number(),
+//   height: z.number(),
+//   url: z.string(),
+//   src: z.object({
+//     large: z.string(),
+//   }),
+//   alt: z.string(),
+//   blurredDataUrl: z.string().optional(),
+// });
+
+// export const ImagesSchemaWithPhotos = BasicImageSchema.extend({
+//   photos: z.array(PhotoSchema),
+// });
