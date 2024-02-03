@@ -1,16 +1,18 @@
 # Image Gallery
 
-Welcome to the Image Gallery, a dynamic web app focused on image handling and presentation. This project showcases my journey in embracing new technologies and continuous learning.
+Welcome to the Image Gallery, a dynamic web app focused on image handling and presentation experience. This project showcases my journey in embracing new technologies and continuous learning.
 
 ## Highlights
 
-- **Migration to App Router**: Transitioning from the Next.js Pages Router to the App Router was a significant shift, involving a deep dive into new documentation, concepts, and a complete restructuring of the application. This challenging journey not only boosted my skills but also the app's performance from a modest 60% to an impressive 100% in Lighthouse performance score.
+- **Migration to App Router**: Transitioning from the Next.js Pages Router to the App Router was a significant shift, involving a deep dive into new documentation, concepts, and a complete restructuring of the application. Ultimatelly boosting performance significantly mostly due to server components capabilities.
 
-![lighthouse-scores](https://github.com/olicoding/image-gallery/assets/92989835/8d9405d7-96ba-4b6d-87ca-71218899443a)
+- **Drag-and-Drop Features**: I've just introduced an intuitive drag-and-drop interface, allowing users to easily organize images.
 
-## Experience the Gallery
+- **Dynamic Carousel View**: Click on any image to enter a carousel mode, offering a closer look at your favorite photos with smooth navigation.
 
-Explore the [live page](https://image-gallery-olicoding.vercel.app/) for a rich photo display and interactive features. Click on any image to view the carousel mode.
+## Try It Live
+
+Visit the [live gallery](https://image-gallery-olicoding.vercel.app/) for a rich photo display and interactive features.
 
 ![gallery](https://github.com/olicoding/image-gallery/assets/92989835/ec6c0aa8-7760-4e6c-81d2-130270446408)
 
