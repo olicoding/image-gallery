@@ -15,6 +15,8 @@ import {
   useSensors,
   PointerSensor,
   TouchSensor,
+  KeyboardSensor,
+  MouseSensor,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -27,7 +29,7 @@ import {
 const draggableImageStyle = (transform, transition) => ({
   transform: CSS.Transform.toString(transform),
   transition,
-  touchAction: "manipulation",
+  touchAction: "none",
 });
 
 const SortablePhotos = ({ photo, isHovered }) => {
@@ -64,31 +66,40 @@ export default function GalleryGrid() {
   const id = useId();
   const { photoId } = useParams();
   const lastViewedPhotoRef = useRef(null);
-  const [draggedItem, setDraggedItem] = useState(null);
-  const [hoveredPhotoId, setHoveredPhotoId] = useState(null);
   const { state, dispatch } = useContext(Context);
   const { photos, lastViewedPhoto } = state;
+  const [draggedItem, setDraggedItem] = useState(null);
+  const [hoveredPhotoId, setHoveredPhotoId] = useState(null);
+  const [dragOverlayStyles, setDragOverlayStyles] = useState({
+    transform: null,
+    transition: "transform 500ms ease",
+  });
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 2,
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 150,
-      },
-    })
+    useSensor(PointerSensor),
+    useSensor(TouchSensor),
+    useSensor(MouseSensor),
+    useSensor(KeyboardSensor)
   );
 
   const onDragStart = (event) => {
     const { active } = event;
-    setDraggedItem(photos.find((photo) => photo.photoId === active.id));
+    const item = photos.find((photo) => photo.photoId === active.id);
+    setDraggedItem(item);
   };
 
-  const onDragOver = (event) => {
-    const { over } = event;
+  const onDragMove = (event) => {
+    const { delta, over } = event;
+    if (draggedItem && delta) {
+      const newTransform = {
+        x: (dragOverlayStyles.transform?.x || 0) + delta.x,
+        y: (dragOverlayStyles.transform?.y || 0) + delta.y,
+      };
+      setDragOverlayStyles({
+        ...dragOverlayStyles,
+        transform: CSS.Transform.toString(newTransform),
+      });
+    }
     setHoveredPhotoId(over?.id);
   };
 
@@ -102,7 +113,12 @@ export default function GalleryGrid() {
         dispatch({ type: "SET_PHOTOS", payload: newPhotosArray });
       }
     }
+    setDragOverlayStyles({
+      transform: null,
+      transition: "transform 500ms ease",
+    });
     setHoveredPhotoId(null);
+    setDraggedItem(null);
   };
 
   useEffect(() => {
@@ -138,7 +154,7 @@ export default function GalleryGrid() {
         <DndContext
           collisionDetection={closestCenter}
           onDragStart={onDragStart}
-          onDragOver={onDragOver}
+          onDragMove={onDragMove}
           onDragEnd={onDragEnd}
           sensors={sensors}
           id={id}
@@ -166,20 +182,18 @@ export default function GalleryGrid() {
               ))}
           </SortableContext>
           <DragOverlay>
-            {draggedItem && (
-              <div>
-                <Image
-                  alt={`Dragging ${draggedItem.alt}`}
-                  blurDataURL={draggedItem.blurDataUrl}
-                  src={draggedItem.blurDataUrl}
-                  width={draggedItem.width}
-                  height={draggedItem.height}
-                  placeholder="blur"
-                  className="rounded-lg border border-2 border-solid border-white"
-                  style={draggableImageStyle}
-                />
-              </div>
-            )}
+            {draggedItem ? (
+              <Image
+                alt={`Dragging ${draggedItem.alt}`}
+                blurDataURL={draggedItem.blurDataUrl}
+                src={draggedItem.blurDataUrl}
+                width={draggedItem.width}
+                height={draggedItem.height}
+                placeholder="blur"
+                className="rounded-lg border border-2 border-solid border-white"
+                style={dragOverlayStyles}
+              />
+            ) : null}
           </DragOverlay>
         </DndContext>
       </div>
