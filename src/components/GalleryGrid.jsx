@@ -24,14 +24,19 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 
-const SortablePhotos = ({ photo }) => {
+const draggableImageStyle = (transform, transition) => ({
+  transform: CSS.Transform.toString(transform),
+  transition,
+  touchAction: "manipulation",
+});
+
+const SortablePhotos = ({ photo, isHovered }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: photo.photoId });
 
   const style = {
-    transition,
-    transform: CSS.Transform.toString(transform),
-    touchAction: "manipulation",
+    ...draggableImageStyle(transform, transition),
+    boxShadow: isHovered ? "0 0 0 2px white" : "none",
   };
 
   return (
@@ -60,6 +65,7 @@ export default function GalleryGrid() {
   const { photoId } = useParams();
   const lastViewedPhotoRef = useRef(null);
   const [draggedItem, setDraggedItem] = useState(null);
+  const [hoveredPhotoId, setHoveredPhotoId] = useState(null);
   const { state, dispatch } = useContext(Context);
   const { photos, lastViewedPhoto } = state;
 
@@ -81,6 +87,11 @@ export default function GalleryGrid() {
     setDraggedItem(photos.find((photo) => photo.photoId === active.id));
   };
 
+  const onDragOver = (event) => {
+    const { over } = event;
+    setHoveredPhotoId(over?.id);
+  };
+
   const onDragEnd = (event) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
@@ -91,6 +102,7 @@ export default function GalleryGrid() {
         dispatch({ type: "SET_PHOTOS", payload: newPhotosArray });
       }
     }
+    setHoveredPhotoId(null);
   };
 
   useEffect(() => {
@@ -126,6 +138,7 @@ export default function GalleryGrid() {
         <DndContext
           collisionDetection={closestCenter}
           onDragStart={onDragStart}
+          onDragOver={onDragOver}
           onDragEnd={onDragEnd}
           sensors={sensors}
           id={id}
@@ -147,6 +160,7 @@ export default function GalleryGrid() {
                   <SortablePhotos
                     key={photo.photoId}
                     photo={photo}
+                    isHovered={hoveredPhotoId === photo.photoId}
                   ></SortablePhotos>
                 </Link>
               ))}
@@ -161,11 +175,8 @@ export default function GalleryGrid() {
                   width={draggedItem.width}
                   height={draggedItem.height}
                   placeholder="blur"
-                  className="rounded-lg"
-                  style={{
-                    filter: "blur(6px)",
-                    scale: "0.8",
-                  }}
+                  className="rounded-lg border border-2 border-solid border-white"
+                  style={draggableImageStyle}
                 />
               </div>
             )}
