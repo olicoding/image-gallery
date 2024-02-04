@@ -76,9 +76,21 @@ export default function GalleryGrid() {
   });
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(TouchSensor),
-    useSensor(MouseSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 2,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        distance: 2,
+      },
+    }),
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 2,
+      },
+    }),
     useSensor(KeyboardSensor)
   );
 
