@@ -78,7 +78,7 @@ export default function GalleryGrid() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 2,
+        delay: 100,
       },
     }),
     useSensor(TouchSensor, {
