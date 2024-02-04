@@ -1,212 +1,156 @@
 "use client";
 
-import { useEffect, useRef, useContext, useState, useId } from "react";
+import { useContext, useState, useId, useCallback, memo, useMemo } from "react";
 import { Context } from "src/context/ContextProvider";
-import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import Star from "src/app/server-components/Star";
-import PhotoViewer from "@/components/PhotoViewer";
 import {
   DndContext,
   closestCenter,
-  DragOverlay,
   useSensor,
   useSensors,
   PointerSensor,
   TouchSensor,
   KeyboardSensor,
-  MouseSensor,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import {
   SortableContext,
   arrayMove,
   rectSortingStrategy,
+  sortableKeyboardCoordinates,
   useSortable,
 } from "@dnd-kit/sortable";
 
-const draggableImageStyle = (transform, transition) => ({
-  transform: CSS.Transform.toString(transform),
-  transition,
-  touchAction: "none",
-});
-
-const SortablePhotos = ({ photo, isHovered }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
+const SortablePhoto = memo(({ photo }) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
     useSortable({ id: photo.photoId });
 
-  const style = {
-    ...draggableImageStyle(transform, transition),
-    boxShadow: isHovered ? "0 0 0 2px white" : "none",
-  };
+  const style = useMemo(
+    () => ({
+      transform: CSS.Transform.toString(transform),
+      transition: isDragging ? "transform 500ms ease" : undefined,
+      touchAction: isDragging ? "none" : "manipulation",
+      opacity: isDragging ? 0.5 : 1,
+    }),
+    [transform, isDragging]
+  );
+
+  const sizes =
+    "(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw";
 
   return (
-    <Image
-      alt="Dynamic photo title"
-      className="group relative mb-5 block w-full transform cursor-move rounded-lg brightness-90 transition will-change-auto group-hover:brightness-110"
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      style={style}
-      placeholder="blur"
-      blurDataURL={photo.blurDataUrl}
-      src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${photo.public_id}.${photo.format}`}
-      width={photo.width}
-      height={photo.height}
-      sizes="(max-width: 640px) 100vw,
-                  (max-width: 1280px) 50vw,
-                  (max-width: 1536px) 33vw,
-                  25vw"
-    />
+    <div
+      className="relative mb-2 w-full"
+      style={{ paddingBottom: `${(photo.height / photo.width) * 100}%` }}
+    >
+      <Image
+        alt={`Photo ${photo.photoId}`}
+        className={`absolute inset-0 h-full w-full cursor-move rounded-lg object-cover brightness-90 will-change-transform hover:brightness-110`}
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
+        style={style}
+        placeholder="blur"
+        blurDataURL={photo.blurDataUrl}
+        src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${photo.public_id}.${photo.format}`}
+        fill
+        sizes={sizes}
+      />
+    </div>
   );
-};
+});
 
 export default function GalleryGrid() {
   const id = useId();
-  const { photoId } = useParams();
-  const lastViewedPhotoRef = useRef(null);
   const { state, dispatch } = useContext(Context);
-  const { photos, lastViewedPhoto } = state;
   const [draggedItem, setDraggedItem] = useState(null);
-  const [hoveredPhotoId, setHoveredPhotoId] = useState(null);
-  const [dragOverlayStyles, setDragOverlayStyles] = useState({
-    transform: null,
-    transition: "transform 500ms ease",
-  });
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         delay: 100,
+        tolerance: 5,
       },
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        distance: 2,
+        delay: 150,
+        tolerance: 10,
       },
     }),
-    useSensor(MouseSensor, {
-      activationConstraint: {
-        distance: 2,
-      },
-    }),
-    useSensor(KeyboardSensor)
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const onDragStart = (event) => {
-    const { active } = event;
-    const item = photos.find((photo) => photo.photoId === active.id);
-    setDraggedItem(item);
-  };
+  const onDragStart = useCallback(
+    (event) => {
+      const item = state.photos.find(
+        (photo) => photo.photoId === event.active.id
+      );
+      if (item) setDraggedItem(item);
+    },
+    [state.photos]
+  );
 
-  const onDragMove = (event) => {
-    const { delta, over } = event;
-    if (draggedItem && delta) {
-      const newTransform = {
-        x: (dragOverlayStyles.transform?.x || 0) + delta.x,
-        y: (dragOverlayStyles.transform?.y || 0) + delta.y,
-      };
-      setDragOverlayStyles({
-        ...dragOverlayStyles,
-        transform: CSS.Transform.toString(newTransform),
-      });
-    }
-    setHoveredPhotoId(over?.id);
-  };
-
-  const onDragEnd = (event) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      const oldIndex = photos.findIndex((photo) => photo.photoId === active.id);
-      const newIndex = photos.findIndex((photo) => photo.photoId === over.id);
-      if (oldIndex !== -1 && newIndex !== -1) {
-        const newPhotosArray = arrayMove(photos, oldIndex, newIndex);
-        dispatch({ type: "SET_PHOTOS", payload: newPhotosArray });
+  const onDragEnd = useCallback(
+    (event) => {
+      const { active, over } = event;
+      if (over && active.id !== over.id) {
+        const oldIndex = state.photos.findIndex(
+          (photo) => photo.photoId === active.id
+        );
+        const newIndex = state.photos.findIndex(
+          (photo) => photo.photoId === over.id
+        );
+        dispatch({
+          type: "SET_PHOTOS",
+          payload: arrayMove(state.photos, oldIndex, newIndex),
+        });
       }
-    }
-    setDragOverlayStyles({
-      transform: null,
-      transition: "transform 500ms ease",
-    });
-    setHoveredPhotoId(null);
-    setDraggedItem(null);
-  };
+      setDraggedItem(null);
+    },
+    [state.photos, dispatch]
+  );
 
-  useEffect(() => {
-    if (lastViewedPhoto && !photoId && lastViewedPhotoRef.current) {
-      lastViewedPhotoRef.current.scrollIntoView({ block: "center" });
-      dispatch({ type: "SET_LAST_VIEWED_PHOTO", payload: null });
-    }
-  }, [lastViewedPhoto, photoId, dispatch]);
+  const photoIds = useMemo(
+    () => state.photos.map((photo) => photo.photoId),
+    [state.photos]
+  );
 
   return (
     <main className="mx-auto max-w-[1960px] p-4">
-      {photoId && (
-        <PhotoViewer
-          images={photos}
-          onClose={() => {
-            dispatch({ type: "SET_LAST_VIEWED_PHOTO", payload: photoId });
-          }}
-        />
-      )}
-      <div className="columns-1 gap-4 sm:columns-2 xl:columns-3 2xl:columns-4">
-        <div className="after:content relative mb-5 flex h-[250px] flex-col items-center justify-end gap-2 overflow-hidden rounded-lg bg-white/10 px-6 pb-10 pt-48 text-center text-white shadow-highlight after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:shadow-highlight lg:pt-0">
-          <div className="absolute inset-0 flex items-start justify-center pt-10 opacity-40">
+      <div className="columns-3 gap-2 sm:columns-4 xl:columns-5 2xl:columns-6">
+        <div className="after:content relative mb-2 flex h-[150px] flex-col items-center justify-end gap-1 overflow-hidden rounded-lg bg-white/10 px-2 pb-4 pt-32 text-center text-white shadow-highlight after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:shadow-highlight">
+          <div className="absolute inset-0 flex items-start justify-center pt-4 opacity-40">
             <span className="flex max-h-full max-w-full items-center justify-center">
               <Star />
             </span>
-            <span className="absolute bottom-0 left-0 right-0 h-[230px] bg-gradient-to-b from-black/0 via-black to-black"></span>
+            <span className="absolute bottom-0 left-0 right-0 h-[150px] bg-gradient-to-b from-black/0 via-black to-black"></span>
           </div>
-
-          <h1 className="mt-8 text-base font-bold uppercase tracking-widest">
-            Photo Gallery
+          <h1 className="text-sm font-bold uppercase">
+            Drag'n Drop and Carousel
           </h1>
         </div>
         <DndContext
           collisionDetection={closestCenter}
           onDragStart={onDragStart}
-          onDragMove={onDragMove}
           onDragEnd={onDragEnd}
           sensors={sensors}
           id={id}
         >
-          <SortableContext items={photos} strategy={rectSortingStrategy}>
-            {photos &&
-              photos.map((photo) => (
-                <Link
-                  href={`/${photo.photoId}`}
-                  key={photo.photoId}
-                  ref={
-                    photo.photoId === Number(lastViewedPhoto)
-                      ? lastViewedPhotoRef
-                      : null
-                  }
-                  scroll={false}
-                  shallow
-                >
-                  <SortablePhotos
-                    key={photo.photoId}
-                    photo={photo}
-                    isHovered={hoveredPhotoId === photo.photoId}
-                  ></SortablePhotos>
+          <SortableContext items={photoIds} strategy={rectSortingStrategy}>
+            {state.photos.map((photo) => (
+              <div
+                key={photo.photoId}
+                onClick={(e) => draggedItem ?? e.preventDefault()}
+              >
+                <Link href={`/${photo.photoId}`} scroll={false} shallow>
+                  <SortablePhoto photo={photo} />
                 </Link>
-              ))}
+              </div>
+            ))}
           </SortableContext>
-          <DragOverlay>
-            {draggedItem ? (
-              <Image
-                alt={`Dragging ${draggedItem.alt}`}
-                blurDataURL={draggedItem.blurDataUrl}
-                src={draggedItem.blurDataUrl}
-                width={draggedItem.width}
-                height={draggedItem.height}
-                placeholder="blur"
-                className="rounded-lg border border-2 border-solid border-white"
-                style={dragOverlayStyles}
-              />
-            ) : null}
-          </DragOverlay>
         </DndContext>
       </div>
     </main>

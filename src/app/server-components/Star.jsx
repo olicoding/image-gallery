@@ -1,8 +1,8 @@
 export default function Star() {
   return (
     <svg
-      width="100"
-      height="100"
+      width="60"
+      height="60"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

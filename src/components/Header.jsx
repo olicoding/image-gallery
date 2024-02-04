@@ -64,7 +64,7 @@ export default function Header() {
   };
 
   return (
-    <header className="flex justify-end bg-black p-4 text-white">
+    <header className="flex justify-end bg-black px-5 pb-1 pt-3 text-white">
       {user ? (
         <button onClick={handleLogout} className="hover:underline">
           Logout

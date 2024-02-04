@@ -3,16 +3,13 @@
 import React, { createContext, useReducer } from "react";
 
 const initialState = {
-  lastViewedPhoto: null,
-  currentPhoto: null,
-  photos: [],
   user: false,
+  photos: [],
+  currentPhoto: null,
 };
 
 function reducer(state, action) {
   switch (action.type) {
-    case "SET_LAST_VIEWED_PHOTO":
-      return { ...state, lastViewedPhoto: action.payload };
     case "SET_CURRENT_PHOTO":
       return { ...state, currentPhoto: action.payload };
     case "SET_PHOTOS":
