@@ -14,6 +14,7 @@ import {
   useSensor,
   useSensors,
   PointerSensor,
+  TouchSensor,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -30,6 +31,7 @@ const SortablePhotos = ({ photo }) => {
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
+    touchAction: "manipulation",
   };
 
   return (
@@ -64,7 +66,12 @@ export default function GalleryGrid() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 2,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
       },
     })
   );
