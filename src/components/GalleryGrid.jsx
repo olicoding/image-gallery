@@ -58,7 +58,7 @@ const SortablePhoto = memo(({ photo }) => {
         src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${photo.public_id}.${photo.format}`}
         fill
         sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
-        draggable={!isMobile}
+        draggable={!isMobile} // temporary
       />
     </motion.div>
   );

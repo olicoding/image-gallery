@@ -6,7 +6,7 @@ Welcome to the Image Gallery, a dynamic web app focused on image handling and pr
 
 - **Migration to App Router**: Transitioning from the Next.js Pages Router to the App Router was a significant shift, involving a deep dive into new documentation, concepts, and a complete restructuring of the application. Ultimatelly boosting performance significantly mostly due to server components capabilities.
 
-- **Drag-and-Drop Features**: I've just introduced an intuitive drag-and-drop interface, allowing users to easily organize images.
+- **Drag-and-Drop Features**: I've just introduced an intuitive drag-and-drop interface, allowing users to easily organize images. It's enabled on desktop devices and disabled on mobile, for now.
 
 - **Dynamic Carousel View**: Click on any image to enter a carousel mode, offering a closer look at your favorite photos with smooth navigation.
 
