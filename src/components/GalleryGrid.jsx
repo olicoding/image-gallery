@@ -2,9 +2,11 @@
 
 import { useContext, useState, useId, useCallback, memo, useMemo } from "react";
 import { Context } from "src/context/ContextProvider";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import Star from "src/app/server-components/Star";
+import { isMobile } from "react-device-detect";
+import { motion } from "framer-motion";
 import {
   DndContext,
   closestCenter,
@@ -13,8 +15,8 @@ import {
   PointerSensor,
   TouchSensor,
   KeyboardSensor,
+  DragOverlay,
 } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 import {
   SortableContext,
   arrayMove,
@@ -27,42 +29,43 @@ const SortablePhoto = memo(({ photo }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useSortable({ id: photo.photoId });
 
-  const style = useMemo(
+  const motionStyle = useMemo(
     () => ({
-      transform: CSS.Transform.toString(transform),
-      transition: isDragging ? "transform 500ms ease" : undefined,
-      touchAction: isDragging ? "none" : "manipulation",
+      x: transform?.x ?? 0,
+      y: transform?.y ?? 0,
       opacity: isDragging ? 0.5 : 1,
+      transition: { type: "spring", stiffness: 600, damping: 30 },
     }),
     [transform, isDragging]
   );
 
-  const sizes =
-    "(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw";
-
   return (
-    <div
-      className="relative mb-2 w-full"
-      style={{ paddingBottom: `${(photo.height / photo.width) * 100}%` }}
+    <motion.div
+      className="relative mb-2 h-full w-full"
+      style={{
+        paddingBottom: `${(photo.height / photo.width) * 100}%`,
+        ...motionStyle,
+      }}
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
     >
       <Image
         alt={`Photo ${photo.photoId}`}
-        className={`absolute inset-0 h-full w-full cursor-move rounded-lg object-cover brightness-90 will-change-transform hover:brightness-110`}
-        ref={setNodeRef}
-        {...attributes}
-        {...listeners}
-        style={style}
+        className="absolute inset-0 h-full w-full cursor-move rounded-lg object-cover brightness-90 hover:brightness-110"
         placeholder="blur"
         blurDataURL={photo.blurDataUrl}
         src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${photo.public_id}.${photo.format}`}
         fill
-        sizes={sizes}
+        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
+        draggable={!isMobile}
       />
-    </div>
+    </motion.div>
   );
 });
 
 export default function GalleryGrid() {
+  const router = useRouter();
   const id = useId();
   const { state, dispatch } = useContext(Context);
   const [draggedItem, setDraggedItem] = useState(null);
@@ -93,9 +96,8 @@ export default function GalleryGrid() {
     [state.photos]
   );
 
-  const onDragEnd = useCallback(
-    (event) => {
-      const { active, over } = event;
+  const onDragOver = useCallback(
+    ({ active, over }) => {
       if (over && active.id !== over.id) {
         const oldIndex = state.photos.findIndex(
           (photo) => photo.photoId === active.id
@@ -103,20 +105,36 @@ export default function GalleryGrid() {
         const newIndex = state.photos.findIndex(
           (photo) => photo.photoId === over.id
         );
+        const updatedPhotos = arrayMove(state.photos, oldIndex, newIndex);
+
         dispatch({
+          // type: "TEMP_UPDATE_PHOTOS",
           type: "SET_PHOTOS",
-          payload: arrayMove(state.photos, oldIndex, newIndex),
+          payload: updatedPhotos,
         });
       }
-      setDraggedItem(null);
     },
     [state.photos, dispatch]
   );
+
+  const onDragEnd = useCallback(() => {
+    setDraggedItem(null);
+  }, []);
 
   const photoIds = useMemo(
     () => state.photos.map((photo) => photo.photoId),
     [state.photos]
   );
+
+  const handlePhotoClick = (event, photoId) => {
+    if (draggedItem) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    } else {
+      router.push(`/${photoId}`);
+    }
+  };
 
   return (
     <main className="mx-auto max-w-[1960px] p-4">
@@ -129,12 +147,13 @@ export default function GalleryGrid() {
             <span className="absolute bottom-0 left-0 right-0 h-[150px] bg-gradient-to-b from-black/0 via-black to-black"></span>
           </div>
           <h1 className="text-sm font-bold uppercase">
-            Drag'n Drop and Carousel
+            {isMobile ? "Carousel Mode onClick" : "Drag'n Drop and Carousel"}
           </h1>
         </div>
         <DndContext
           collisionDetection={closestCenter}
           onDragStart={onDragStart}
+          onDragOver={onDragOver}
           onDragEnd={onDragEnd}
           sensors={sensors}
           id={id}
@@ -143,14 +162,23 @@ export default function GalleryGrid() {
             {state.photos.map((photo) => (
               <div
                 key={photo.photoId}
-                onClick={(e) => draggedItem ?? e.preventDefault()}
+                onClick={(e) => handlePhotoClick(e, photo.photoId)}
               >
-                <Link href={`/${photo.photoId}`} scroll={false} shallow>
-                  <SortablePhoto photo={photo} />
-                </Link>
+                <SortablePhoto photo={photo} />
               </div>
             ))}
           </SortableContext>
+          <DragOverlay>
+            {draggedItem && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.5 }}
+                transition={{ duration: 0.3 }}
+              >
+                <SortablePhoto photo={draggedItem} />
+              </motion.div>
+            )}
+          </DragOverlay>
         </DndContext>
       </div>
     </main>
