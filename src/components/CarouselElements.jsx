@@ -67,16 +67,22 @@ export default function CarouselElements({ closeModal, navigation }) {
                 className="absolute"
               >
                 <Image
+                  // src={`https://res.cloudinary.com/${
+                  //   process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+                  // }/image/upload/c_scale,${navigation ? "w_1280" : "w_1920"}/${
+                  //   currentPhoto.public_id
+                  // }.${currentPhoto.format}`}
                   src={`https://res.cloudinary.com/${
                     process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-                  }/image/upload/c_scale,${navigation ? "w_1280" : "w_1920"}/${
-                    currentPhoto.public_id
-                  }.${currentPhoto.format}`}
+                  }/image/upload/f_auto,q_auto,c_scale,${
+                    navigation ? "w_1280" : "w_1920"
+                  }/${currentPhoto.public_id}.${currentPhoto.format}`}
                   width={navigation ? 1280 : 1920}
                   height={navigation ? 853 : 1280}
                   priority
                   alt="Dynamic photo title"
                   onLoad={() => setLoaded(true)}
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
                 />
               </motion.div>
             </AnimatePresence>
@@ -161,7 +167,8 @@ export default function CarouselElements({ closeModal, navigation }) {
                       } relative inline-block  w-full shrink-0  overflow-hidden focus:outline-none`}
                     >
                       <Image
-                        src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_180/${photo.public_id}.${photo.format}`}
+                        // src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_180/${photo.public_id}.${photo.format}`}
+                        src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,c_scale,w_180/${photo.public_id}.${photo.format}`}
                         alt="Thumbnail"
                         width={180}
                         height={120}
@@ -170,6 +177,7 @@ export default function CarouselElements({ closeModal, navigation }) {
                             ? "brightness-115 hover:brightness-110"
                             : "brightness-50 contrast-125"
                         } mx-1 transition hover:brightness-75`}
+                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
                       />
                     </motion.button>
                   ))}

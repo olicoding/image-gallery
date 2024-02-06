@@ -13,13 +13,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="flex h-svh flex-col content-center justify-between bg-black antialiased">
+      <body className="flex h-svh flex-col content-center justify-start bg-black antialiased">
         <FetchedImages>
           {(images) => (
             <ContextProvider initialImages={images}>
               <Analytics />
               <Header />
-              <main className="mx-auto max-w-6xl">{children}</main>
+              <main className="mx-auto max-w-6xl grow">{children}</main>
               <Footer />
             </ContextProvider>
           )}

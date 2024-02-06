@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useReducer } from "react";
+import React, { createContext, useMemo, useReducer } from "react";
 
 const initialState = {
   user: false,
@@ -31,10 +31,13 @@ export default function ContextProvider({ children, initialImages }) {
     photos: initialImages || [],
   });
 
-  const value = {
-    state,
-    dispatch,
-  };
+  const value = useMemo(
+    () => ({
+      state,
+      dispatch,
+    }),
+    [state]
+  );
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
