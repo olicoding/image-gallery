@@ -5,7 +5,7 @@ export async function getBase64ImageUrl(image) {
   if (url) {
     return url;
   }
-  const imageUrl = `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_10/${image.public_id}.${image.format}`;
+  const imageUrl = `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_30/${image.public_id}.${image.format}`;
   const response = await fetch(imageUrl);
   const arrayBuffer = await response.arrayBuffer();
   const base64 = Buffer.from(arrayBuffer).toString("base64");

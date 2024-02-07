@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useEffect, useContext } from "react";
+import { useEffect, useContext } from "react";
 import { useParams } from "next/navigation";
 import { Context } from "@/context/ContextProvider";
-
-const Loading = React.lazy(() => import("../server-components/Loading"));
-const CarouselStructure = React.lazy(() =>
-  import("@/components/CarouselStructure")
-);
+import Loading from "../server-components/Loading";
+import CarouselStructure from "@/components/CarouselStructure";
 
 const PhotoPage = () => {
   const { photoId } = useParams();

@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import React, { Suspense, useContext } from "react";
 import useKeypress from "react-use-keypress";
-import CarouselElements from "./CarouselElements";
-import { useContext } from "react";
 import { Context } from "src/context/ContextProvider";
 import Loading from "src/app/server-components/Loading";
+
+const CarouselElements = React.lazy(() => import("./CarouselElements"));
 
 export default function CarouselStructure() {
   const { state, dispatch } = useContext(Context);
@@ -40,12 +41,14 @@ export default function CarouselStructure() {
           priority
         />
       </button>
-      <CarouselElements
-        index={index}
-        currentPhoto={currentPhoto}
-        closeModal={closeModal}
-        navigation={true}
-      />
+      <Suspense fallback={<Loading />}>
+        <CarouselElements
+          index={index}
+          currentPhoto={currentPhoto}
+          closeModal={closeModal}
+          navigation={true}
+        />
+      </Suspense>
     </div>
   );
 }

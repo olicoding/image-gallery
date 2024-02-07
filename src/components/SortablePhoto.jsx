@@ -31,13 +31,13 @@ const SortablePhoto = memo(({ photo }) => {
       {...listeners}
     >
       <Image
+        src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,c_fill,w_300/${photo.public_id}.${photo.format}`}
         alt={`Photo ${photo.photoId}`}
         className="absolute inset-0 h-full w-full cursor-move rounded-lg object-cover brightness-90 will-change-transform hover:brightness-110"
         placeholder="blur"
         blurDataURL={photo.blurDataUrl}
-        src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,c_scale,w_720/${photo.public_id}.${photo.format}`}
+        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
         fill
-        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
       />
     </motion.div>
   );
