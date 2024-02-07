@@ -44,14 +44,14 @@ const GalleryDesktop = () => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        delay: 100,
-        tolerance: 5,
+        delay: 150,
+        tolerance: 10,
       },
     }),
     useSensor(TouchSensor, {
       activationConstrain: {
-        delay: 150,
-        tolerance: 10,
+        delay: 200,
+        tolerance: 15,
       },
     }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })

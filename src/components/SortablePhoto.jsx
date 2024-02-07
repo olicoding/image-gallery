@@ -14,7 +14,7 @@ const SortablePhoto = memo(({ photo }) => {
       x: transform?.x ?? 0,
       y: transform?.y ?? 0,
       opacity: isDragging ? 0.5 : 1,
-      transition: { type: "spring", stiffness: 600, damping: 30 },
+      transition: { type: "spring", stiffness: 100, damping: 25, mass: 3 },
     }),
     [transform, isDragging]
   );

@@ -95,7 +95,7 @@ export default function CarouselElements({ closeModal, navigation }) {
           </AnimatePresence>
         </div>
 
-        <div className="absolute inset-0 mx-auto flex max-w-7xl items-center justify-between md:p-4 lg:py-16 shorter-than-1000:py-16">
+        <div className="md: absolute inset-0 mx-auto flex max-w-7xl items-center justify-between md:px-6 lg:px-14 shorter-than-1000:py-16">
           {loaded && (
             <div className="relative aspect-[3/2] max-h-full w-full">
               {navigation && (
