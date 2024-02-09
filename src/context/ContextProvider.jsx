@@ -3,21 +3,23 @@
 import React, { createContext, useMemo, useReducer } from "react";
 
 const initialState = {
-  user: false,
+  user: null,
   photos: [],
   currentPhoto: null,
 };
 
 function reducer(state, action) {
   switch (action.type) {
-    case "SET_CURRENT_PHOTO":
-      return { ...state, currentPhoto: action.payload };
+    case "SET_USER":
+      return { ...state, user: action.payload };
+    case "LOGOUT":
+      return { ...state, user: null };
     case "SET_PHOTOS":
       return { ...state, photos: action.payload };
     case "TEMP_UPDATE_PHOTOS":
       return { ...state, photos: action.payload };
-    case "SET_USER":
-      return { ...state, user: action.payload };
+    case "SET_CURRENT_PHOTO":
+      return { ...state, currentPhoto: action.payload };
     default:
       throw new Error("Unhandled action type: " + action.type);
   }

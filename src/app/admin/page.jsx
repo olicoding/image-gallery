@@ -1,4 +1,4 @@
-import Dashboard from "src/app/server-components/Dashboard";
+import Dashboard from "@/server-components/Dashboard";
 
 const Admin = () => {
   return <Dashboard />;

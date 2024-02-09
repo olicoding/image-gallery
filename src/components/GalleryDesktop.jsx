@@ -10,7 +10,7 @@ import {
 } from "react";
 import { isMobile } from "react-device-detect";
 import { useRouter } from "next/navigation";
-import { Context } from "src/context/ContextProvider";
+import { Context } from "@/context/ContextProvider";
 import {
   DndContext,
   closestCenter,

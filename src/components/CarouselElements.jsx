@@ -8,11 +8,11 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
-import { useContext, useState } from "react";
-import { Context } from "src/context/ContextProvider";
 import { useSwipeable } from "react-swipeable";
-import downloadPhoto from "src/utils/downloadPhoto";
-import Loading from "src/app/server-components/Loading";
+import { useContext, useState } from "react";
+import { Context } from "@/context/ContextProvider";
+import downloadPhoto from "@/utils/downloadPhoto";
+import Loading from "@/server-components/Loading";
 
 export default function CarouselElements({ closeModal, navigation }) {
   const { state, dispatch } = useContext(Context);

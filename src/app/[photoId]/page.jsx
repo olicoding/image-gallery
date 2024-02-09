@@ -3,7 +3,7 @@
 import { useEffect, useContext } from "react";
 import { useParams } from "next/navigation";
 import { Context } from "@/context/ContextProvider";
-import Loading from "../server-components/Loading";
+import Loading from "@/server-components/Loading";
 import CarouselStructure from "@/components/CarouselStructure";
 
 const PhotoPage = () => {

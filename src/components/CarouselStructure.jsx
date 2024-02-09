@@ -4,8 +4,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { Suspense, useContext } from "react";
 import useKeypress from "react-use-keypress";
-import { Context } from "src/context/ContextProvider";
-import Loading from "src/app/server-components/Loading";
+import { Context } from "@/context/ContextProvider";
+import Loading from "@/server-components/Loading";
 
 const CarouselElements = React.lazy(() => import("./CarouselElements"));
 

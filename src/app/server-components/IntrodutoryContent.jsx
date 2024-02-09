@@ -1,4 +1,4 @@
-import Star from "./Star";
+import Star from "@/server-components/Star";
 
 export default function IntroductoryContent() {
   return (

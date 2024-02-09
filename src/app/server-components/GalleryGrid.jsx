@@ -1,5 +1,5 @@
-import IntroductoryContent from "src/app/server-components/IntrodutoryContent";
-import GalleryDesktop from "../../components/GalleryDesktop";
+import IntroductoryContent from "@/server-components//IntrodutoryContent";
+import GalleryDesktop from "@/components/GalleryDesktop";
 
 export default function GalleryGrid() {
   return (

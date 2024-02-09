@@ -1,13 +1,14 @@
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
-import FetchedImages from "src/app/server-components/FetchedImages";
-import ContextProvider from "src/context/ContextProvider";
+import FetchedImages from "@/server-components/FetchedImages";
+import ContextProvider from "@/context/ContextProvider";
+import Footer from "@/server-components/Footer";
 import Header from "@/components/Header";
-import Footer from "src/app/server-components/Footer";
 
 export const metadata = {
   title: "Image Gallery",
-  description: "Modern Image Gallery",
+  description:
+    "A Modern Image Gallery With Drag'n Drop & Carousel Interactive Features",
 };
 
 export default function RootLayout({ children }) {
