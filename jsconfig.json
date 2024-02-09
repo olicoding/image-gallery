@@ -6,9 +6,11 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
+      "@/server-components/*": ["src/app/server-components/*"],
       "@/components/*": ["src/components/*"],
       "@/context/*": ["src/context/*"],
-      "@/utils/*": ["src/utils/*"]
+      "@/utils/*": ["src/utils/*"],
+      "@/app/*": ["src/app/*"]
     }
   },
   "exclude": ["node_modules", "next.config.js", ".next/", "out/"]
