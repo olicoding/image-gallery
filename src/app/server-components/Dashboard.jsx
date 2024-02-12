@@ -1,7 +1,11 @@
+import React from "react";
+import { CollapsibleProvider } from "@/context/CollapsibleContext";
+const SidebarMenu = React.lazy(() => import("@/components/SidebarMenu"));
+
 export default function Dashboard() {
   return (
-    <p className="mx-auto mt-10 w-[250px] text-center text-white">
-      COMING SOON!
-    </p>
+    <CollapsibleProvider>
+      <SidebarMenu />
+    </CollapsibleProvider>
   );
 }

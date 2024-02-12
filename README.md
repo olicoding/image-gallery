@@ -6,9 +6,9 @@ Welcome to the Image Gallery, a dynamic web app focused on image handling and pr
 
 - **Migration to App Router**: Transitioning from the Next.js Pages Router to the App Router was a significant shift, involving a deep dive into new documentation, concepts, and a complete restructuring of the application. Ultimatelly boosting performance significantly mostly due to server components capabilities.
 
-- **Drag-and-Drop Features**: I've just introduced an intuitive drag-and-drop interface, allowing users to easily organize images. It's enabled on desktop devices and disabled on mobile, for now.
+- **Drag-and-Drop Features**: An intuitive drag-and-drop interface is available on both desktop and mobile devices, enhancing user experience across different platforms.
 
-- **Dynamic Carousel View**: Click on any image to enter a carousel mode, offering a closer look at your favorite photos with smooth navigation.
+- **Dynamic Carousel View**: Click on any image to enter a carousel mode, offering a closer look at your favorite photos with smooth swiping navigation.
 
 ## Try It Live
 
@@ -23,10 +23,9 @@ Visit the [live gallery](https://image-gallery-olicoding.vercel.app/) for a rich
 
 ## Roadmap
 
-- **Login API**: The current implementation is symbolic. A more secure and modern approach is planned, emphasizing best practices in authentication and security.
+- **Admin Area Development**: Focusing on intuitive management, the upcoming admin area will introduce drag-and-drop functionality and multiple albums organization features.
 - **Validation with Zod**: To ensure data integrity.
 - **PWA and Caching**: Enhancing offline capabilities and performance.
-- **Admin Area Development**: Focusing on intuitive management, the upcoming admin area will introduce drag-and-drop functionality and multiple albums organization features.
 
 ---
 

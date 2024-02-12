@@ -37,7 +37,7 @@ export default function Header() {
     if (formState === true) {
       resetDropdown();
       dispatch({ type: "SET_USER", payload: { role: "Admin" } });
-      router.push("/admin");
+      router.push("/admin", { scroll: false });
     }
   }, [formState, dispatch]);
 

@@ -1,4 +1,4 @@
-import Star from "@/server-components/Star";
+import Star from "@/server-components/svg/Star";
 
 export default function IntroductoryContent() {
   return (
