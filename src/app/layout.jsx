@@ -4,6 +4,7 @@ import FetchedImages from "@/server-components/FetchedImages";
 import ContextProvider from "@/context/ContextProvider";
 import Footer from "@/server-components/Footer";
 import Header from "@/components/Header";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Image Gallery",
@@ -16,10 +17,12 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="flex h-svh flex-col content-center justify-start bg-black antialiased">
         <FetchedImages>
-          {(images) => (
-            <ContextProvider initialImages={images}>
-              <Analytics />
-              <Header />
+          {({ images }) => (
+            <ContextProvider directories={images}>
+              {/* <Analytics /> */}
+              <Suspense>
+                <Header />
+              </Suspense>
               <main className="mx-auto max-w-6xl grow">{children}</main>
               <Footer />
             </ContextProvider>

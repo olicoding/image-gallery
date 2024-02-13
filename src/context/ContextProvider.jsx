@@ -4,33 +4,37 @@ import React, { createContext, useMemo, useReducer } from "react";
 
 const initialState = {
   user: null,
-  photos: [],
   currentPhoto: null,
+  currentDirectory: "homegallery",
+  allDirectories: {},
 };
 
 function reducer(state, action) {
   switch (action.type) {
-    case "SET_USER":
-      return { ...state, user: action.payload };
     case "LOGOUT":
       return { ...state, user: null };
-    case "SET_PHOTOS":
-      return { ...state, photos: action.payload };
-    case "TEMP_UPDATE_PHOTOS":
-      return { ...state, photos: action.payload };
+    case "SET_USER":
+      return { ...state, user: action.payload };
     case "SET_CURRENT_PHOTO":
       return { ...state, currentPhoto: action.payload };
+    case "SET_CURRENT_DIRECTORY":
+      return { ...state, currentDirectory: action.payload };
+    case "UPDATE_IMAGE_ORDER_IN_FOLDER":
+      const { currentDirectory, updatedPhotos } = action.payload;
+      const updatedDirectoryStructure = { ...state.allDirectories };
+      updatedDirectoryStructure[currentDirectory] = updatedPhotos;
+      return { ...state, allDirectories: updatedDirectoryStructure };
     default:
-      throw new Error("Unhandled action type: " + action.type);
+      return state;
   }
 }
 
 export const Context = createContext();
 
-export default function ContextProvider({ children, initialImages }) {
+export default function ContextProvider({ children, directories }) {
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
-    photos: initialImages || [],
+    allDirectories: directories || {},
   });
 
   const value = useMemo(

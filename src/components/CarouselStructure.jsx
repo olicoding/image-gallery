@@ -11,7 +11,7 @@ const CarouselElements = React.lazy(() => import("./CarouselElements"));
 
 export default function CarouselStructure() {
   const { state, dispatch } = useContext(Context);
-  const { photos, currentPhoto } = state;
+  const { currentPhoto } = state;
   const router = useRouter();
 
   function closeModal() {
@@ -22,10 +22,6 @@ export default function CarouselStructure() {
   useKeypress("Escape", closeModal);
 
   if (!currentPhoto) return <Loading />;
-
-  const index = photos.findIndex(
-    (photo) => photo.photoId === currentPhoto.photoId
-  );
 
   return (
     <div className="fixed inset-0 flex items-center justify-center">
@@ -42,12 +38,7 @@ export default function CarouselStructure() {
         />
       </button>
       <Suspense fallback={<Loading />}>
-        <CarouselElements
-          index={index}
-          currentPhoto={currentPhoto}
-          closeModal={closeModal}
-          navigation={true}
-        />
+        <CarouselElements closeModal={closeModal} />
       </Suspense>
     </div>
   );

@@ -8,7 +8,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { isMobile } from "react-device-detect";
 import { useRouter } from "next/navigation";
 import { Context } from "@/context/ContextProvider";
 import {
@@ -34,12 +33,25 @@ const GalleryDesktop = () => {
   const router = useRouter();
   const id = useId();
   const { state, dispatch } = useContext(Context);
+  const { currentDirectory, allDirectories } = state;
   const [draggedItem, setDraggedItem] = useState(null);
-  const [isDraggable, setIsDraggable] = useState(!isMobile);
 
-  useEffect(() => {
-    setIsDraggable(isMobile);
-  }, [isMobile]);
+  const currentFolderImages = useMemo(() => {
+    const pathSegments = currentDirectory.split("/");
+    let images = state.allDirectories;
+
+    for (const segment of pathSegments) {
+      if (images[segment]) {
+        if (images[segment] instanceof Array) {
+          images = images[segment];
+        } else {
+          images = Object.values(images[segment]);
+        }
+      }
+    }
+
+    return images;
+  }, [allDirectories, currentDirectory]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -59,33 +71,39 @@ const GalleryDesktop = () => {
 
   const onDragStart = useCallback(
     (event) => {
-      const item = state.photos.find(
+      const item = currentFolderImages.find(
         (photo) => photo.photoId === event.active.id
       );
       if (item) setDraggedItem(item);
     },
-    [state.photos]
+    [currentFolderImages]
   );
 
   const onDragOver = useCallback(
     ({ active, over }) => {
       if (over && active.id !== over.id) {
-        const oldIndex = state.photos.findIndex(
+        const oldIndex = currentFolderImages.findIndex(
           (photo) => photo.photoId === active.id
         );
-        const newIndex = state.photos.findIndex(
+        const newIndex = currentFolderImages.findIndex(
           (photo) => photo.photoId === over.id
         );
-        const updatedPhotos = arrayMove(state.photos, oldIndex, newIndex);
+        const updatedPhotos = arrayMove(
+          currentFolderImages,
+          oldIndex,
+          newIndex
+        );
 
         dispatch({
-          // type: "TEMP_UPDATE_PHOTOS",
-          type: "SET_PHOTOS",
-          payload: updatedPhotos,
+          type: "UPDATE_IMAGE_ORDER_IN_FOLDER",
+          payload: {
+            currentDirectory,
+            updatedPhotos,
+          },
         });
       }
     },
-    [state.photos, dispatch]
+    [currentFolderImages, dispatch, currentDirectory]
   );
 
   const onDragEnd = useCallback(() => {
@@ -98,13 +116,13 @@ const GalleryDesktop = () => {
       event.stopPropagation();
       return;
     } else {
-      router.push(`/${photoId}`);
+      router.push(`/album/${currentDirectory}/${photoId}`);
     }
   };
 
   const photoIds = useMemo(
-    () => state.photos.map((photo) => photo.photoId),
-    [state.photos]
+    () => currentFolderImages.map((photo) => photo.photoId),
+    [currentFolderImages]
   );
 
   return (
@@ -118,9 +136,9 @@ const GalleryDesktop = () => {
         id={id}
       >
         <SortableContext items={photoIds} strategy={rectSortingStrategy}>
-          {state.photos.map((photo) => (
+          {currentFolderImages.map((photo) => (
             <div
-              key={photo.photoId}
+              key={photo.public_id}
               onClick={(e) => handlePhotoClick(e, photo.photoId)}
             >
               <SortablePhoto photo={photo} />
@@ -135,7 +153,7 @@ const GalleryDesktop = () => {
               animate={{ opacity: 0.5 }}
               transition={{ duration: 0.3 }}
             >
-              <SortablePhoto isDraggable={isDraggable} photo={draggedItem} />
+              <SortablePhoto isDraggable={true} photo={draggedItem} />
             </motion.div>
           )}
         </DragOverlay>

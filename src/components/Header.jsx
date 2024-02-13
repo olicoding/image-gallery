@@ -1,12 +1,22 @@
 "use client";
 
-import { useRef, useState, useContext, useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useContext,
+  useEffect,
+  Suspense,
+} from "react";
 import { useFormState } from "react-dom";
 import { Context } from "@/context/ContextProvider";
 import { handleLogin, handleLogout } from "@/app/actions";
 import useOutsideClick from "@/utils/useOutsideClick";
 import { useRouter } from "next/navigation";
 import useKeypress from "react-use-keypress";
+import { CollapsibleProvider } from "@/context/CollapsibleContext";
+import { CldUploadButton } from "next-cloudinary";
+
+const SidebarMenu = React.lazy(() => import("@/components/SidebarMenu"));
 
 export default function Header() {
   const { state, dispatch } = useContext(Context);
@@ -35,32 +45,47 @@ export default function Header() {
 
   useEffect(() => {
     if (formState === true) {
-      resetDropdown();
       dispatch({ type: "SET_USER", payload: { role: "Admin" } });
-      router.push("/admin", { scroll: false });
+      resetDropdown();
     }
   }, [formState, dispatch]);
 
   return (
-    <header className="flex justify-end bg-black px-5 pb-1 pt-3 text-white">
-      {state.user ? (
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            handleLogoutClick();
-          }}
-          className="hover:underline"
-        >
-          Logout
-        </button>
-      ) : (
-        <button
-          onClick={() => setShowDropdown(!showDropdown)}
-          className="hover:underline"
-        >
-          Admin
-        </button>
-      )}
+    <header className="flex min-h-10 justify-end bg-black px-5 pb-1 pt-3 text-white">
+      <Suspense>
+        {state.user ? (
+          <nav className="flex w-full justify-end gap-5">
+            {state.user ? (
+              <>
+                <CollapsibleProvider>
+                  <SidebarMenu />
+                </CollapsibleProvider>
+
+                <CldUploadButton
+                  className="hover:underline"
+                  uploadPreset="bqmxpio4"
+                />
+              </>
+            ) : null}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                handleLogoutClick();
+              }}
+              className="hover:underline"
+            >
+              Logout
+            </button>
+          </nav>
+        ) : (
+          <button
+            onClick={() => setShowDropdown(!showDropdown)}
+            className="ml-auto hover:underline"
+          >
+            Admin
+          </button>
+        )}
+      </Suspense>
       {showDropdown && (
         <div
           ref={dropdownRef}
