@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useId,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useContext, useId, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Context } from "@/context/ContextProvider";
 import {
@@ -117,6 +110,7 @@ const GalleryDesktop = () => {
       return;
     } else {
       router.push(`/album/${currentDirectory}/${photoId}`);
+      dispatch({ type: "SET_VIEW_MODE", payload: "carousel" });
     }
   };
 

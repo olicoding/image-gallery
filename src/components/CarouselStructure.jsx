@@ -17,6 +17,7 @@ export default function CarouselStructure() {
   function closeModal() {
     router.push("/", undefined, { shallow: true });
     dispatch({ type: "SET_CURRENT_PHOTO", payload: null });
+    dispatch({ type: "SET_VIEW_MODE", payload: "grid" });
   }
 
   useKeypress("Escape", closeModal);
@@ -26,7 +27,7 @@ export default function CarouselStructure() {
   return (
     <div className="fixed inset-0 flex items-center justify-center">
       <button
-        className="absolute inset-0 z-30 cursor-default bg-black backdrop-blur-2xl"
+        className="absolute inset-0 z-50 cursor-default bg-black backdrop-blur-2xl"
         onClick={closeModal}
       >
         <Image

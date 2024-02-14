@@ -4,6 +4,7 @@ import React, { createContext, useMemo, useReducer } from "react";
 
 const initialState = {
   user: null,
+  viewMode: "grid",
   currentPhoto: null,
   currentDirectory: "homegallery",
   allDirectories: {},
@@ -15,6 +16,8 @@ function reducer(state, action) {
       return { ...state, user: null };
     case "SET_USER":
       return { ...state, user: action.payload };
+    case "SET_VIEW_MODE":
+      return { ...state, viewMode: action.payload };
     case "SET_CURRENT_PHOTO":
       return { ...state, currentPhoto: action.payload };
     case "SET_CURRENT_DIRECTORY":
