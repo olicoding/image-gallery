@@ -3,7 +3,7 @@ import { Analytics } from "@vercel/analytics/react";
 import FetchedImages from "@/server-components/FetchedImages";
 import ContextProvider from "@/context/ContextProvider";
 import Footer from "@/server-components/Footer";
-import Header from "@/components/Header";
+import Header from "@/server-components/Header";
 
 export const metadata = {
   title: "Image Gallery",

@@ -6,7 +6,7 @@ const initialState = {
   user: null,
   viewMode: "grid",
   currentPhoto: null,
-  currentDirectory: "homegallery",
+  currentDirectory: "Europe",
   allDirectories: {},
 };
 

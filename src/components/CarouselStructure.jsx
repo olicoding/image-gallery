@@ -32,7 +32,7 @@ export default function CarouselStructure() {
       >
         <Image
           src={currentPhoto?.blurDataUrl}
-          className="pointer-events-none h-full w-full"
+          className="h-full w-full"
           alt="blurred background"
           fill
           priority
