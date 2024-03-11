@@ -49,14 +49,14 @@ const GalleryDesktop = () => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        delay: 150,
-        tolerance: 10,
+        delay: 50,
+        tolerance: 5,
       },
     }),
     useSensor(TouchSensor, {
       activationConstrain: {
-        delay: 200,
-        tolerance: 15,
+        delay: 100,
+        tolerance: 10,
       },
     }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -136,21 +136,20 @@ const GalleryDesktop = () => {
               onClick={(e) => handlePhotoClick(e, photo.photoId)}
             >
               <SortablePhoto photo={photo} />
+              {draggedItem && (
+                <DragOverlay>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.5 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <SortablePhoto isDraggable={true} photo={draggedItem} />
+                  </motion.div>
+                </DragOverlay>
+              )}
             </div>
           ))}
         </SortableContext>
-
-        <DragOverlay>
-          {draggedItem && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              transition={{ duration: 0.3 }}
-            >
-              <SortablePhoto isDraggable={true} photo={draggedItem} />
-            </motion.div>
-          )}
-        </DragOverlay>
       </DndContext>
     </>
   );
