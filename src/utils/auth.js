@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { loginSchema } from "./authSchema";
 
 const secretKey = process.env.JWT_SECRET_KEY;
 const key = new TextEncoder().encode(secretKey);
@@ -21,11 +22,21 @@ export async function decrypt(input) {
 }
 
 export async function login({ password }) {
+  const validationResult = loginSchema.safeParse({ password });
+  if (!validationResult.success)
+    return { success: false, error: "Invalid password" };
+
   if (password === process.env.ADMIN_SECRET) {
     const user = { role: "Admin" };
     const expires = new Date(Date.now() + 3600 * 1000);
     const session = await encrypt({ user, expires });
-    cookies().set("session", session, { expires, httpOnly: true });
+
+    cookies().set("session", session, {
+      expires,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+    });
 
     return { success: true, user };
   } else {
@@ -34,7 +45,12 @@ export async function login({ password }) {
 }
 
 export async function logout() {
-  cookies().set("session", "", { expires: new Date(0) });
+  cookies().set("session", "", {
+    expires: new Date(0),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+  });
   return { success: true };
 }
 
@@ -55,7 +71,10 @@ export async function updateSession(request) {
     name: "session",
     value: await encrypt(parsed),
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
     expires: parsed.expires,
   });
+
   return res;
 }
