@@ -28,38 +28,26 @@ const GalleryDesktop = () => {
   const { state, dispatch } = useContext(Context);
   const { currentDirectory, allDirectories } = state;
   const [draggedItem, setDraggedItem] = useState(null);
+  const [dragStarted, setDragStarted] = useState(null);
+  const [interactionType, setInteractionType] = useState("click");
 
-  const currentFolderImages = useMemo(() => {
-    const pathSegments = currentDirectory.split("/");
-    let images = state.allDirectories;
+  const currentFolderImages = allDirectories[currentDirectory] || [];
 
-    for (const segment of pathSegments) {
-      if (images[segment]) {
-        if (images[segment] instanceof Array) {
-          images = images[segment];
-        } else {
-          images = Object.values(images[segment]);
-        }
-      }
-    }
-
-    return images;
-  }, [allDirectories, currentDirectory]);
+  const activateDrag = {
+    delay: 125,
+    tolerance: 10,
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: {
-        delay: 50,
-        tolerance: 5,
-      },
+      activationConstraint: activateDrag,
     }),
     useSensor(TouchSensor, {
-      activationConstrain: {
-        delay: 100,
-        tolerance: 10,
-      },
+      activationConstraint: activateDrag,
     }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
   );
 
   const onDragStart = useCallback(
@@ -101,17 +89,26 @@ const GalleryDesktop = () => {
 
   const onDragEnd = useCallback(() => {
     setDraggedItem(null);
+    setTimeout(() => setInteractionType("click"), 0);
   }, []);
 
-  const handlePhotoClick = (event, photoId) => {
-    if (draggedItem) {
-      event.preventDefault();
-      event.stopPropagation();
-      return;
-    } else {
+  const handlePhotoClick = (photoId) => {
+    if (interactionType === "click") {
       router.push(`/album/${currentDirectory}/${photoId}`);
       dispatch({ type: "SET_VIEW_MODE", payload: "carousel" });
     }
+  };
+
+  const handleMouseDown = () => {
+    setDragStarted(Date.now());
+  };
+
+  const handleMouseUp = (photoId) => {
+    const interactionDuration = Date.now() - dragStarted;
+    if (interactionDuration < activateDrag.delay) {
+      handlePhotoClick(photoId);
+    }
+    setDragStarted(null);
   };
 
   const photoIds = useMemo(
@@ -133,7 +130,8 @@ const GalleryDesktop = () => {
           {currentFolderImages.map((photo) => (
             <div
               key={photo.public_id}
-              onClick={(e) => handlePhotoClick(e, photo.photoId)}
+              onMouseDown={handleMouseDown}
+              onMouseUp={() => handleMouseUp(photo.photoId)}
             >
               <SortablePhoto photo={photo} />
               {draggedItem && (
