@@ -34,8 +34,8 @@ const GalleryDesktop = () => {
   const currentFolderImages = allDirectories[currentDirectory] || [];
 
   const activateDrag = {
-    delay: 125,
-    tolerance: 10,
+    delay: 200,
+    tolerance: 5,
   };
 
   const sensors = useSensors(
@@ -105,7 +105,7 @@ const GalleryDesktop = () => {
 
   const handleMouseUp = (photoId) => {
     const interactionDuration = Date.now() - dragStarted;
-    if (interactionDuration < activateDrag.delay) {
+    if (interactionDuration < 200) {
       handlePhotoClick(photoId);
     }
     setDragStarted(null);
