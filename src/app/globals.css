@@ -39,3 +39,7 @@ body::-webkit-scrollbar {
 body::-ms-overflow-style {
   display: none;
 }
+
+.dragging {
+  cursor: grabbing;
+}
